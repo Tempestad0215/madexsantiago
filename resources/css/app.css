@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components{
+    /* Input del formulario */
+    .input{
+        @apply rounded-md;
+    }
+    /* Label */
+    .label{
+        @apply block font-bold;
+    }
+    /* Ocultar campo de la tabla */
+    .hidden-field-lg{
+        @apply hidden lg:table-cell truncate;
+    }
+    .hidden-field-sm{
+        @apply hidden sm:table-cell truncate;
+    }
+}
