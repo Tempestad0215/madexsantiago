@@ -24,6 +24,35 @@ export interface CargaI{
     vehiculo: string
 }
 
+// Con resource
+export interface cargaResourceI{
+    data: CargaI
+}
+// por default
+export interface cargaDefaultI{
+    bruto: number;
+    cant_pacas: number | null;
+    cedula: string | null;
+    color: number;
+    creacion: string;
+    desc: number | null;
+    desc_kg: number;
+    estatus_tiket: number;
+    fecha_pago_tiket: string | null;
+    id: number;
+    material: number;
+    mes: number;
+    pago_efectivo: number;
+    placa: string | null;
+    precio_kg: number;
+    sub_total: number;
+    suelto_paca: number;
+    suplidor: string | null;
+    tara: number;
+    total_kg: number;
+    vehiculo: number;
+}
+
 export interface paginationI{
     data: Array<CargaI>;
     links: linksI;

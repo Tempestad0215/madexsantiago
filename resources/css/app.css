@@ -18,4 +18,8 @@
     .hidden-field-sm{
         @apply hidden sm:table-cell truncate;
     }
+    /* Boton de enviar */
+    .boton-send{
+        @apply bg-green-500 px-3 rounded-md font-bold w-[120px];
+    }
 }

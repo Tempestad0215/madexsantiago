@@ -18,6 +18,8 @@ use Inertia\Inertia;
 Route::middleware('guest')->group(function(){
     Route::get('/', [CargaController::class, 'index'])->name('carga.index');
     Route::post('/',[CargaController::class,'store'])->name('carga.store');
+    Route::get('/ver/{carga}',[CargaController::class,'see'])->name('carga.see');
+    Route::get('/editar/{carga}',[CargaController::class,'edit'])->name('carga.edit');
 });
 
 

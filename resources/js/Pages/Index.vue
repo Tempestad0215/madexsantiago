@@ -3,7 +3,7 @@ import { Head, useForm, usePage } from '@inertiajs/vue3';
 import ShowIndex from './Partials/ShowIndex.vue';
 import {successHttp} from '../global/alert'
 import { onMounted, PropType } from 'vue';
-import { paginationI } from '../interfaces/carga';
+import { paginationI, cargaDefaultI } from '../interfaces/carga';
 
 const page = usePage();
 
@@ -15,14 +15,48 @@ const props = defineProps({
     cargas:{
         type: Object as PropType<paginationI>,
         required: true
+    },
+    fecha_actual:{
+        type: String,
+        required: true
+    },
+    carga_edit:{
+        type: Object as PropType<cargaDefaultI>,
+    },
+    update:{
+        type: Boolean,
+        default: false
     }
 });
 
 onMounted(()=>{
+    if(props.carga_edit)
+    {
+        form.id = props.carga_edit.id;
+        form.suplidor = props.carga_edit.suplidor;
+        form.desc = props.carga_edit.desc;
+        form.material = props.carga_edit.material;
+        form.bruto = props.carga_edit.bruto;
+        form.tara = props.carga_edit.tara;
+        form.sub_total = props.carga_edit.sub_total;
+        form.desc_kg = props.carga_edit.desc_kg;
+        form.total_kg = props.carga_edit.total_kg;
+        form.estatus_tiket = props.carga_edit.estatus_tiket;
+        form.fecha_pago_tiket = props.carga_edit.fecha_pago_tiket;
+        form.precio_kg = props.carga_edit.precio_kg;
+        form.cant_pacas = props.carga_edit.cant_pacas;
+        form.suelto_paca = props.carga_edit.suelto_paca;
+        form.cedula = props.carga_edit.cedula;
+        form.vehiculo = props.carga_edit.vehiculo;
+        form.color = props.carga_edit.color;
+        form.placa = props.carga_edit.placa;
+        form.mes = props.carga_edit.mes;
+    }
 });
 
 
 const form = useForm({
+    id:0,
     suplidor:"",
     desc: 0,
     material: 1,
@@ -52,6 +86,7 @@ const submit = () => {
     form.post(route('carga.store'),{
         onSuccess:()=>{
             successHttp('Datos registrado correctamente');
+            form.reset();
         }
     })
 }
@@ -491,6 +526,7 @@ const submit = () => {
                 Datos registrados
             </h3>
             <ShowIndex
+                :fecha_actual="fecha_actual"
                 :cargas="cargas"/>
         </div>
     </div>

@@ -22,12 +22,12 @@ return new class extends Migration
             $table->float('desc_kg')->nullable();
             $table->float('total_kg')->nullable();
             $table->enum('estatus_tiket',[1,2]);
-            $table->date('fecha_pago_tiket');
-            $table->float('precio_kg');
-            $table->float('pago_efectivo');
-            $table->float('cant_pacas');
+            $table->date('fecha_pago_tiket')->nullable();
+            $table->float('precio_kg')->nullable();
+            $table->float('pago_efectivo')->nullable();
+            $table->float('cant_pacas')->nullable();
             $table->enum('suelto_paca',[1,2]);
-            $table->string('cedula',20);
+            $table->string('cedula',20)->nullable();
             $table->enum('vehiculo',[1,2,3,4,5,6,7]);
             $table->enum('color',[1,2,3,4,5,6,7]);
             $table->string('placa',20)->nullable();

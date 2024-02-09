@@ -10,6 +10,7 @@ use App\Enums\VehiculoEnum;
 use App\Http\Resources\CargaResource;
 use App\Models\carga;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -20,14 +21,16 @@ class CargaController extends Controller
     public function index(Request $request){
 
         try {
-            // Mes actuale en int
+            // Conseguir el mes
             $mes = Carbon::now()->month;
-            $data = carga::latest()->simplePaginate(25);
+            // Pasar las data
+            $data = $this->getData($request);
             // Obteneer los datos regitrados
             $dataFinal = CargaResource::collection($data)->response()->getData(true);
-
+            // Devolver la vista con los datos
             return Inertia::render('Index',[
                 'mes' => $mes,
+                'fecha_actual' => Carbon::now()->format('Y-m-d'),
                 'cargas' => $dataFinal
             ]);
         } catch (\Throwable $th) {
@@ -76,5 +79,68 @@ class CargaController extends Controller
         } catch (\Throwable $th) {
             throw $th;
         }
+    }
+    // Ver la orden seleccionada
+    public function see(carga $carga)
+    {
+        try {
+            // Ver los datos seleccionada
+            $cargaFinal = new CargaResource($carga);
+            // Devolver los datos
+            return Inertia::render('Partials/SeeCarga',[
+                'carga' => $cargaFinal
+            ]);
+
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+    // Editar la orden
+    public function edit(carga $carga, Request $request)
+    {
+        try {
+            // Conseguir el mes
+            $mes = Carbon::now()->month;
+            // Conseguir la data
+            $data = $this->getData($request);
+            // Obteneer los datos regitrados
+            $dataFinal = CargaResource::collection($data)->response()->getData(true);
+
+           // Devolver la vista con los datos
+           return Inertia::render('Index',[
+            'mes' => $mes,
+            'fecha_actual' => Carbon::now()->format('Y-m-d'),
+            'cargas' => $dataFinal,
+            'carga_edit' => $carga,
+            'update' => true
+        ]);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+    // Metodo para buscar la orden
+    private function getData(Request $request)
+    {
+        // Buscar
+        $suplidor = $request->suplidor;
+        // Desde
+        $desde = $request->desde ?? Carbon::now()->format('Y-m-d');
+        // Hasta
+        $hasta = $request->hasta ?? Carbon::now()->format('Y-m-d');
+        // reducir un dia para el calculo
+        $desdeFinal = Carbon::parse($desde)->subDay()->format('Y-m-d');
+        // Agreagr un dia para el calculo
+        $hastaFinal = Carbon::parse($hasta)->addDay()->format('Y-m-d');
+        // Fecha
+        // Buscar los datos
+        $data = carga::where('suplidor','LIKE','%'.$suplidor.'%')
+            ->where(function(Builder $query) use ($desdeFinal, $hastaFinal) {
+                $query->whereDate('created_at','>',$desdeFinal)
+                    ->whereDate('created_at','<',$hastaFinal);
+            })->latest()
+            ->simplePaginate(25);
+
+        return $data;
     }
 }
