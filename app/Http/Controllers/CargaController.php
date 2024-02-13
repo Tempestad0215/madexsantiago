@@ -2,18 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\ColorEnum;
-use App\Enums\EstatusTiketEnum;
-use App\Enums\MaterialEnum;
-use App\Enums\MesEnum;
-use App\Enums\VehiculoEnum;
 use App\Http\Requests\CargaRequest;
 use App\Http\Resources\CargaResource;
 use App\Models\carga;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class CargaController extends Controller
@@ -223,16 +217,11 @@ class CargaController extends Controller
         $desde = $request->desde ?? Carbon::now()->format('Y-m-d');
         // Hasta
         $hasta = $request->hasta ?? Carbon::now()->format('Y-m-d');
-        // reducir un dia para el calculo
-        $desdeFinal = Carbon::parse($desde)->subDay()->format('Y-m-d');
-        // Agreagr un dia para el calculo
-        $hastaFinal = Carbon::parse($hasta)->addDay()->format('Y-m-d');
-        // Fecha
         // Buscar los datos
         $data = carga::where('suplidor','LIKE','%'.$suplidor.'%')
-            ->where(function(Builder $query) use ($desdeFinal, $hastaFinal) {
-                $query->whereDate('created_at','>',$desdeFinal)
-                    ->whereDate('created_at','<',$hastaFinal);
+            ->where(function(Builder $query) use ($desde, $hasta) {
+                $query->whereDate('created_at','>=',$desde)
+                    ->whereDate('created_at','<=',$hasta);
             })->latest()
             ->simplePaginate(25);
 

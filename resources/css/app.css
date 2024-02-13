@@ -20,6 +20,6 @@
     }
     /* Boton de enviar */
     .boton-send{
-        @apply bg-green-500 px-3 rounded-md font-bold w-[120px];
+        @apply bg-blue-800 text-white py-1 px-3 rounded-md font-bold w-[120px];
     }
 }

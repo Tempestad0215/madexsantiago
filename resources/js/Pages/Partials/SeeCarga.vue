@@ -3,8 +3,6 @@ import { PropType } from 'vue';
 import { cargaResourceI } from '../../interfaces/carga';
 import { Head, router } from '@inertiajs/vue3';
 import DataCarga from './DataCarga.vue';
-import Swal from 'sweetalert2';
-import { successHttp } from '../../global/alert';
 import { formatoDinero } from '../../global/helpers';
 
 // Propiedades
@@ -23,27 +21,10 @@ const editar = (id:number) =>{
 const imprimir = (id:number) => {
     router.get(route('carga.print',{carga: id}));
 }
-// Eliminr la orden seleccionada
-// const eliminar = (id:number) => {
-//     Swal.fire({
-//         title: "Seguro desea eliminar?",
-//         text: "Los cambios realizados no se pueden deshacer!",
-//         icon: "warning",
-//         showCancelButton: true,
-//         confirmButtonColor: "#3085d6",
-//         cancelButtonColor: "#d33",
-//         confirmButtonText: "Si, eliminar!",
-//         cancelButtonText: "Cancelar"
-//     }).then((result) => {
-//     if (result.isConfirmed) {
-//         router.delete(route('carga.destroy',{carga: id}),{
-//             onSuccess: ()=>{
-//                 successHttp('Registro eliminado correctamente');
-//             }
-//         })
-//         }
-//     });
-// }
+// Retornar hacia atras
+const atras = () => {
+    window.history.back();
+}
 
 
 </script>
@@ -55,14 +36,21 @@ const imprimir = (id:number) => {
     <div
         class=" bg-gray-400 px-5 pb-7">
         <h4
-            class="py-5 text-center font-bold text-xl text-blue-900">
+            class="py-5 text-center font-bold text-xl text-blue-800">
             Mostrando el registro N° {{ carga.data.id }}
         </h4>
         <!-- Boton para editar la orden -->
         <div class="mb-3 space-x-3">
             <button
+                @click="atras()"
+                class="boton-send "
+                type="button">
+                Atras
+                <i class="fa-solid fa-rotate-left"></i>
+            </button>
+            <button
                 @click="editar(carga.data.id)"
-                class="boton-send  bg-orange-500"
+                class="boton-send  bg-orange-800"
                 type="button">
                 Editar
                 <i

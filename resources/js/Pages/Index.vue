@@ -8,7 +8,7 @@ import { moneyConfig } from '../global/moneyConfig';
 import { formatoDinero, limpiarCampo } from '../global/helpers';
 import { reactive } from 'vue';
 import { ref } from 'vue';
-
+import Error from './Partials/Error.vue';
 
 
 const props = defineProps({
@@ -223,7 +223,7 @@ const reportDate = () => {
         <!-- Botones para navegar algunos datos -->
         <div class="mt-3">
             <Link
-                class=" bg-blue-600 px-3 py-1 text-white rounded-md"
+                class=" bg-blue-800 px-3 py-2 text-white rounded-md"
                 :href="route('carga.show')">
                 Mostrar
                 <i class="fa-solid fa-table-list"></i>
@@ -231,7 +231,7 @@ const reportDate = () => {
         </div>
         <!-- Formulario de la carga -->
         <form
-            class=" mb-3 sm:grid sm:grid-cols-2 sm:gap-3"
+            class=" mb-3 sm:grid sm:grid-cols-2 sm:gap-3 lg:grid-cols-4"
             @submit.prevent="submit">
             <h3
                 class="text-xl my-3 font-bold text-blue-800 text-center sm:col-span-full">
@@ -251,6 +251,8 @@ const reportDate = () => {
                     type="text"
                     name="suplidor"
                     id="suplidor">
+                <!-- Mostrar el error -->
+                <Error :data="form.errors.suplidor"/>
             </div>
             <!-- DESC. -->
             <div>
@@ -267,6 +269,8 @@ const reportDate = () => {
                     type="text"
                     name="desc"
                     id="desc">
+                <!-- Mostrar el error -->
+                <Error :data="form.errors.desc"/>
             </div>
             <!-- Material -->
             <div>
@@ -292,6 +296,8 @@ const reportDate = () => {
                         Otros
                     </option>
                 </select>
+                <!-- Mostrar el error -->
+                <Error :data="form.errors.material"/>
             </div>
             <!-- Bruto -->
             <div>
@@ -308,6 +314,8 @@ const reportDate = () => {
                     type="text"
                     name="bruto"
                     id="bruto">
+                <!-- Mostrar el error -->
+                <Error :data="form.errors.bruto"/>
             </div>
             <!-- Tara-->
             <div>
@@ -324,6 +332,8 @@ const reportDate = () => {
                     type="text"
                     name="tara"
                     id="tara">
+                <!-- Mostrar el error -->
+                <Error :data="form.errors.tara"/>
             </div>
             <!-- TODO: Restar el bruto - tara para el subtotal -->
             <!-- Sub total-->
@@ -341,6 +351,8 @@ const reportDate = () => {
                     type="text"
                     name="sub-total"
                     id="sub-total">
+                <!-- Mostrar el error -->
+                <Error :data="form.errors.sub_total"/>
             </div>
             <!-- TODO: Calcular el descuento haciel sel sub total para pasar a total KG -->
             <!-- Descuento de KG-->
@@ -358,6 +370,8 @@ const reportDate = () => {
                     type="text"
                     name="sub-total"
                     id="sub-total">
+                <!-- Mostrar el error -->
+                <Error :data="form.errors.sub_total"/>
             </div>
             <!-- Total KG-->
             <div>
@@ -374,6 +388,8 @@ const reportDate = () => {
                     type="text"
                     name="total-kg"
                     id="total-kg">
+                <!-- Mostrar el error -->
+                <Error :data="form.errors.total_kg"/>
             </div>
             <!-- Estatus del ticket-->
             <div>
@@ -396,6 +412,8 @@ const reportDate = () => {
                         Pen. de pago
                     </option>
                 </select>
+                <!-- Mostrar el error -->
+                <Error :data="form.errors.estatus_tiket"/>
             </div>
             <!-- Fecha pago del tiket-->
             <div>
@@ -410,6 +428,8 @@ const reportDate = () => {
                     type="date"
                     name="fecha-pago-tiket"
                     id="fecha-pago-tiket">
+                <!-- Mostrar el error -->
+                <Error :data="form.errors.fecha_pago_tiket"/>
             </div>
             <!-- PRecio KG-->
             <div>
@@ -426,6 +446,8 @@ const reportDate = () => {
                     type="text"
                     name="precio-kg"
                     id="precio-kg">
+                <!-- Mostrar el error -->
+                <Error :data="form.errors.precio_kg"/>
             </div>
             <!-- PAgo efectiuvo-->
             <div>
@@ -442,6 +464,8 @@ const reportDate = () => {
                     type="text"
                     name="pago-efectivo"
                     id="pago-efectivo">
+                <!-- Mostrar el error -->
+                <Error :data="form.errors.pago_efectivo"/>
             </div>
             <!-- Cantidad de pacas-->
             <div>
@@ -457,6 +481,8 @@ const reportDate = () => {
                     type="text"
                     name="cant-paca"
                     id="cant-paca">
+                <!-- Mostrar el error -->
+                <Error :data="form.errors.cant_pacas"/>
             </div>
             <!-- suelkta o empacada-->
             <div>
@@ -479,6 +505,8 @@ const reportDate = () => {
                         Pacas
                     </option>
                 </select>
+                <!-- Mostrar el error -->
+                <Error :data="form.errors.suelto_paca"/>
             </div>
             <!-- Cedula-->
             <div>
@@ -494,6 +522,8 @@ const reportDate = () => {
                     type="text"
                     name="cedula"
                     id="cedula">
+                <!-- Mostrar el error -->
+                <Error :data="form.errors.cedula"/>
             </div>
             <!-- Vehiculo-->
             <div>
@@ -536,6 +566,8 @@ const reportDate = () => {
                         Motor
                     </option>
                 </select>
+                <!-- Mostrar el error -->
+                <Error :data="form.errors.vehiculo"/>
             </div>
              <!-- Vehiculo-->
              <div>
@@ -578,6 +610,8 @@ const reportDate = () => {
                         Gris
                     </option>
                 </select>
+                <!-- Mostrar el error -->
+                <Error :data="form.errors.color"/>
             </div>
             <!-- Placa-->
             <div>
@@ -593,6 +627,8 @@ const reportDate = () => {
                     type="text"
                     name="placa"
                     id="placa">
+                <!-- Mostrar el error -->
+                <Error :data="form.errors.placa"/>
             </div>
             <!-- MEs-->
             <div>
@@ -655,18 +691,20 @@ const reportDate = () => {
                         Diciembre
                     </option>
                 </select>
+                <!-- Mostrar el error -->
+                <Error :data="form.errors.mes"/>
             </div>
             <!-- Boton para Registrar los datos -->
             <div class="mt-3 text-right space-x-3 sm:col-span-full">
                 <button
                     @click="limpiar()"
-                    class=" bg-red-500 px-3 rounded-md font-bold"
+                    class=" bg-red-500 px-3 py-1 rounded-md font-bold"
                     type="reset">
                     Limpiar
                     <i class="fa-solid fa-eraser"></i>
                 </button>
                 <button
-                    class=" bg-green-500 px-3 rounded-md font-bold"
+                    class=" boton-send px-3 rounded-md font-bold"
                     type="submit">
                     {{ update ? 'Actualizar' : 'Guardar'}}
                     <i class="fa-solid fa-floppy-disk"></i>
@@ -706,6 +744,8 @@ const reportDate = () => {
                         type="date"
                         name="desde"
                         id="desde">
+                    <!-- Error -->
+                    <Error :data="formReport.errors.desde"/>
                 </div>
                 <!-- Hasta -->
                 <div>
@@ -720,15 +760,17 @@ const reportDate = () => {
                         type="date"
                         name="hasta"
                         id="hasta">
+                    <!-- Error -->
+                    <Error :data="formReport.errors.hasta"/>
                 </div>
                 <!-- Boton para enviar los datos -->
-                <div class="text-right sm:col-span-full">
+                <div class="text-right sm:col-span-full mt-3">
                     <button
                         @click="reportDate"
-                        class="boton-send w-[150px]"
+                        class="boton-send w-[175px]"
                         type="button">
-                        Crear reporte
-                        <i class="fa-solid fa-file-lines"></i>
+                        Imprimir Reporte
+                        <i class="fa-solid fa-print"></i>
                     </button>
                 </div>
 

@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { PropType } from 'vue';
 import { paginationI } from '../../interfaces/carga';
-import { Head, Link, router, useForm } from '@inertiajs/vue3';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
 import { formatoDinero } from '../../global/helpers';
 import Swal from 'sweetalert2';
 import { successHttp } from '../../global/alert';
+import { onMounted } from 'vue';
+import { ref } from 'vue';
+import Error from './Error.vue';
 
 
 const props = defineProps({
@@ -17,13 +20,19 @@ const props = defineProps({
         required: true
     }
 });
-
+// Componetnte para comprobar
+const componente = ref("");
 // Datos del formulario
 const form = useForm({
     suplidor:"",
-    desde: props.fecha_actual,
-    hasta: props.fecha_actual
+    desde: "",
+    hasta: ""
 });
+
+onMounted(()=>{
+    componente.value = usePage().component
+});
+
 
 // Buscar los datos
 const submit = () => {
@@ -69,9 +78,11 @@ const eliminarCarga = (id:number) => {
     <!-- Datos de la ventana -->
     <div class=" px-3 pt-5 bg-gray-400 pb-6">
         <!-- Botones para navegar algunos datos -->
-        <div class="my-3">
+        <div
+            v-if="componente === 'Partials/ShowIndex'"
+            class="my-3">
             <Link
-                class=" bg-blue-600 px-3 py-1 text-white rounded-md"
+                class=" bg-blue-800 px-3 py-2 text-white rounded-md"
                 :href="route('carga.index')">
                 Registrar
                 <i class="fa-solid fa-plus"></i>
@@ -80,7 +91,7 @@ const eliminarCarga = (id:number) => {
         <hr>
         <!-- Formulario de los datos -->
         <form
-            class="mt-3"
+            class="mt-3 "
             @submit.prevent="submit">
             <!-- Buscar los datos -->
             <div>
@@ -90,6 +101,8 @@ const eliminarCarga = (id:number) => {
                     class=" input w-full"
                     placeholder="Buscar"
                     type="text">
+                <!-- Error -->
+                <Error :data="form.errors.suplidor"/>
             </div>
             <!-- Fecha para buscar los datos -->
             <div class="my-3 space-y-1">
@@ -105,8 +118,10 @@ const eliminarCarga = (id:number) => {
                         type="date"
                         name="desde"
                         id="desde">
-                    <!-- Hasta -->
+                    <!-- Error -->
+                    <Error :data="form.errors.desde"/>
                 </div>
+                    <!-- Hasta -->
                 <div>
                     <label
                         class="label"
@@ -119,6 +134,8 @@ const eliminarCarga = (id:number) => {
                         type="date"
                         name="hasta"
                         id="hasta">
+                    <!-- Error -->
+                    <Error :data="form.errors.hasta"/>
                 </div>
             </div>
             <!-- Boton para buscar los datos -->
