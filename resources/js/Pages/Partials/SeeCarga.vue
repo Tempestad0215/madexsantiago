@@ -3,6 +3,9 @@ import { PropType } from 'vue';
 import { cargaResourceI } from '../../interfaces/carga';
 import { Head, router } from '@inertiajs/vue3';
 import DataCarga from './DataCarga.vue';
+import Swal from 'sweetalert2';
+import { successHttp } from '../../global/alert';
+import { formatoDinero } from '../../global/helpers';
 
 // Propiedades
 const props = defineProps({
@@ -18,8 +21,29 @@ const editar = (id:number) =>{
 }
 // Imprimir la orden seleccionada
 const imprimir = (id:number) => {
-
+    router.get(route('carga.print',{carga: id}));
 }
+// Eliminr la orden seleccionada
+// const eliminar = (id:number) => {
+//     Swal.fire({
+//         title: "Seguro desea eliminar?",
+//         text: "Los cambios realizados no se pueden deshacer!",
+//         icon: "warning",
+//         showCancelButton: true,
+//         confirmButtonColor: "#3085d6",
+//         cancelButtonColor: "#d33",
+//         confirmButtonText: "Si, eliminar!",
+//         cancelButtonText: "Cancelar"
+//     }).then((result) => {
+//     if (result.isConfirmed) {
+//         router.delete(route('carga.destroy',{carga: id}),{
+//             onSuccess: ()=>{
+//                 successHttp('Registro eliminado correctamente');
+//             }
+//         })
+//         }
+//     });
+// }
 
 
 </script>
@@ -28,8 +52,10 @@ const imprimir = (id:number) => {
 
 <template>
     <Head title="Ver registro"/>
-    <div class=" bg-gray-400 px-5 pb-7">
-        <h4 class="py-5 text-center font-bold text-xl text-blue-900">
+    <div
+        class=" bg-gray-400 px-5 pb-7">
+        <h4
+            class="py-5 text-center font-bold text-xl text-blue-900">
             Mostrando el registro N° {{ carga.data.id }}
         </h4>
         <!-- Boton para editar la orden -->
@@ -60,7 +86,7 @@ const imprimir = (id:number) => {
         <!-- DEscuento -->
         <DataCarga
             label="Descuento"
-            :data="carga.data.desc"/>
+            :data="formatoDinero(carga.data.desc) +' %'"/>
         <!-- DEscuento -->
         <DataCarga
             label="Material"
@@ -68,23 +94,23 @@ const imprimir = (id:number) => {
         <!-- DEscuento -->
         <DataCarga
             label="Bruto"
-            :data="carga.data.bruto"/>
+            :data="formatoDinero(carga.data.bruto) + ' KG.'"/>
         <!-- DEscuento -->
         <DataCarga
             label="Tara"
-            :data="carga.data.tara"/>
+            :data="formatoDinero(carga.data.tara) + ' KG.'"/>
         <!-- DEscuento -->
         <DataCarga
             label="Sub total"
-            :data="carga.data.sub_total"/>
+            :data="formatoDinero(carga.data.sub_total) + ' KG.'"/>
         <!-- DEscuento -->
         <DataCarga
             label="Descuento KG"
-            :data="carga.data.desc_kg"/>
+            :data="formatoDinero(carga.data.desc_kg) + ' KG.'"/>
         <!-- DEscuento -->
         <DataCarga
             label="Total KG"
-            :data="carga.data.total_kg"/>
+            :data="formatoDinero(carga.data.total_kg)+ ' KG.'"/>
         <!-- DEscuento -->
         <DataCarga
             label="Estatus tiket"
@@ -96,15 +122,15 @@ const imprimir = (id:number) => {
         <!-- DEscuento -->
         <DataCarga
             label="Precio x KG"
-            :data="carga.data.precio_kg"/>
+            :data="'$ ' +formatoDinero(carga.data.precio_kg)"/>
         <!-- DEscuento -->
         <DataCarga
             label="Pago Efectivo"
-            :data="carga.data.pago_efectivo"/>
+            :data="'$ '+ formatoDinero(carga.data.pago_efectivo)"/>
         <!-- DEscuento -->
         <DataCarga
             label="Cantidad pacas"
-            :data="carga.data.cant_pacas"/>
+            :data="formatoDinero(carga.data.cant_pacas)"/>
         <!-- DEscuento -->
         <DataCarga
             label="Tipo empaquetado"

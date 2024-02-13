@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { PropType } from 'vue';
 import { paginationI } from '../../interfaces/carga';
-import { router, useForm } from '@inertiajs/vue3';
+import { Head, Link, router, useForm } from '@inertiajs/vue3';
+import { formatoDinero } from '../../global/helpers';
+import Swal from 'sweetalert2';
+import { successHttp } from '../../global/alert';
 
 
 const props = defineProps({
@@ -34,13 +37,50 @@ const submit = () => {
 const verCarga = (id:number)=>{
     router.get(route('carga.see',{id}));
 }
+// Eliminar la carga
+const eliminarCarga = (id:number) => {
+    Swal.fire({
+        title: "Desea eliminar?",
+        text: "Los cambios realizados son irreversible!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Si, eliminar!",
+        cancelButtonText: "Cancelar"
+    }).then((result) => {
+    if (result.isConfirmed) {
+        router.delete(route('carga.destroy',{carga: id}),{
+            onSuccess:()=>{
+                // Mensaje de exito al eliminar
+                successHttp("Registro eliminado corectamente");
+            }
+        });
+
+        }
+    });
+}
 
 </script>
 
 
 <template>
-    <div>
+    <Head title="Registro"/>
+    <!-- Datos de la ventana -->
+    <div class=" px-3 pt-5 bg-gray-400 pb-6">
+        <!-- Botones para navegar algunos datos -->
+        <div class="my-3">
+            <Link
+                class=" bg-blue-600 px-3 py-1 text-white rounded-md"
+                :href="route('carga.index')">
+                Registrar
+                <i class="fa-solid fa-plus"></i>
+            </Link>
+        </div>
+        <hr>
+        <!-- Formulario de los datos -->
         <form
+            class="mt-3"
             @submit.prevent="submit">
             <!-- Buscar los datos -->
             <div>
@@ -126,24 +166,28 @@ const verCarga = (id:number)=>{
                     </td>
                     <td
                         class="hidden-field-lg">
-                        {{ item.bruto }}
+                        {{ formatoDinero(item.bruto) }}
                     </td>
                     <td
                         class="hidden-field-lg">
-                        {{ item.tara }}
+                        {{ formatoDinero(item.tara) }}
                     </td>
                     <td
                         class="hidden-field-lg">
-                        {{ item.total_kg }}
+                        {{ formatoDinero(item.total_kg) }}
                     </td>
                     <td class=" truncate max-w-[75px]">
                         {{ item.estatus_tiket }}
                     </td>
-                    <td>
+                    <td class="space-x-3">
                         <i
                             @click="verCarga(item.id)"
                             class=" text-blue-600 fa-solid fa-eye">
                         </i>
+                        <!-- Eliinar registro -->
+                        <i
+                            @click="eliminarCarga(item.id)"
+                            class=" text-red-500 fa-solid fa-trash-can"></i>
                     </td>
                 </tr>
             </tbody>

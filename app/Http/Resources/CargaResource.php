@@ -18,7 +18,7 @@ class CargaResource extends JsonResource
         return [
             'id' => $this->id,
             'suplidor' => $this->suplidor,
-            'desc' => $this->desc,
+            'desc' =>  $this->desc,
             'material' => $this->material->name,
             'bruto' => $this->bruto,
             'tara' => $this->tara,
@@ -31,10 +31,10 @@ class CargaResource extends JsonResource
             'pago_efectivo' => $this->pago_efectivo,
             'cant_pacas' => $this->cant_pacas,
             'suelto_paca' => $this->suelto_paca->name,
-            'cedula' => $this->cedula,
+            'cedula' => $this->cedula ?? 'null',
             'vehiculo' => $this->vehiculo->name,
             'color' => $this->color->name,
-            'placa' => $this->placa,
+            'placa' => $this->placa ?? 'null',
             'mes' => $this->mes->name,
             'creacion' => $this->created_at->format('d/m/Y h:i:s')
 

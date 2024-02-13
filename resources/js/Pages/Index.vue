@@ -1,11 +1,15 @@
 <script setup lang="ts">
-import { Head, useForm, usePage } from '@inertiajs/vue3';
+import { Head, Link, router, useForm} from '@inertiajs/vue3';
 import ShowIndex from './Partials/ShowIndex.vue';
 import {successHttp} from '../global/alert'
 import { onMounted, PropType } from 'vue';
-import { paginationI, cargaDefaultI } from '../interfaces/carga';
+import { paginationI,reporteGeneralI , CargaI } from '../interfaces/carga';
+import { moneyConfig } from '../global/moneyConfig';
+import { formatoDinero, limpiarCampo } from '../global/helpers';
+import { reactive } from 'vue';
+import { ref } from 'vue';
 
-const page = usePage();
+
 
 const props = defineProps({
     mes:{
@@ -21,30 +25,42 @@ const props = defineProps({
         required: true
     },
     carga_edit:{
-        type: Object as PropType<cargaDefaultI>,
+        type: Object as PropType<CargaI>,
     },
     update:{
         type: Boolean,
         default: false
+    },
+    reporte:{
+        type: Object as PropType<reporteGeneralI>,
+        required: true
     }
 });
+
+const totales = reactive({
+    subtotal: 0,
+    total: 0,
+    porciento: 0,
+    descuento: 0
+})
+const porciento = ref(0)
 
 onMounted(()=>{
     if(props.carga_edit)
     {
         form.id = props.carga_edit.id;
         form.suplidor = props.carga_edit.suplidor;
-        form.desc = props.carga_edit.desc;
+        form.desc = props.carga_edit.desc.toFixed(2);
         form.material = props.carga_edit.material;
-        form.bruto = props.carga_edit.bruto;
-        form.tara = props.carga_edit.tara;
-        form.sub_total = props.carga_edit.sub_total;
-        form.desc_kg = props.carga_edit.desc_kg;
-        form.total_kg = props.carga_edit.total_kg;
+        form.bruto = props.carga_edit.bruto.toFixed(2);
+        form.tara = props.carga_edit.tara.toFixed(2);
+        form.sub_total = props.carga_edit.sub_total.toFixed(2);
+        form.desc_kg = props.carga_edit.desc_kg.toFixed(2);
+        form.total_kg = props.carga_edit.total_kg.toFixed(2);
         form.estatus_tiket = props.carga_edit.estatus_tiket;
         form.fecha_pago_tiket = props.carga_edit.fecha_pago_tiket;
-        form.precio_kg = props.carga_edit.precio_kg;
-        form.cant_pacas = props.carga_edit.cant_pacas;
+        form.precio_kg = props.carga_edit.precio_kg.toFixed(2);
+        form.cant_pacas = props.carga_edit.cant_pacas.toFixed(2);
         form.suelto_paca = props.carga_edit.suelto_paca;
         form.cedula = props.carga_edit.cedula;
         form.vehiculo = props.carga_edit.vehiculo;
@@ -58,18 +74,18 @@ onMounted(()=>{
 const form = useForm({
     id:0,
     suplidor:"",
-    desc: 0,
+    desc: "",
     material: 1,
-    bruto: 0,
-    tara: 0,
-    sub_total: 0,
-    desc_kg: 0,
-    total_kg: 0,
+    bruto: "",
+    tara: "",
+    sub_total: "",
+    desc_kg: "",
+    total_kg: "",
     estatus_tiket: 1,
-    fecha_pago_tiket: null,
-    precio_kg: 0,
-    pago_efectivo: 0,
-    cant_pacas: 0,
+    fecha_pago_tiket: "",
+    precio_kg: "",
+    pago_efectivo: "",
+    cant_pacas: "",
     suelto_paca: 1,
     cedula: "",
     vehiculo: 1,
@@ -79,31 +95,149 @@ const form = useForm({
 
 
 });
+// Formulario para reporte por fecha
+const formReport = useForm({
+    desde:"",
+    hasta:""
+});
 
 
 // Funciones
 const submit = () => {
-    form.post(route('carga.store'),{
-        onSuccess:()=>{
-            successHttp('Datos registrado correctamente');
-            form.reset();
-        }
-    })
+    if(props.update)
+    {
+        form.transform((data) => ({
+            ...data,
+            suplidor: data.suplidor.toUpperCase(),
+            placa: data.placa.toUpperCase(),
+            desc: limpiarCampo(data.desc),
+            bruto: limpiarCampo(data.bruto),
+            tara: limpiarCampo(data.tara),
+            sub_total: limpiarCampo(data.sub_total),
+            desc_kg: limpiarCampo(data.desc_kg),
+            total_kg: limpiarCampo(data.total_kg),
+            precio_kg: limpiarCampo(data.precio_kg),
+            pago_efectivo: limpiarCampo(data.pago_efectivo),
+            cant_pacas: limpiarCampo(data.cant_pacas),
+        })).put(route('carga.update',{carga: form.id}),{
+            onSuccess:()=>{
+                successHttp('Registro actualizado correctamente');
+            }
+        });
+    }else{
+
+        form.transform((data) => ({
+            ...data,
+            suplidor: data.suplidor.toUpperCase(),
+            placa: data.placa.toUpperCase(),
+            desc: limpiarCampo(data.desc),
+            bruto: limpiarCampo(data.bruto),
+            tara: limpiarCampo(data.tara),
+            sub_total: limpiarCampo(data.sub_total),
+            desc_kg: limpiarCampo(data.desc_kg),
+            total_kg: limpiarCampo(data.total_kg),
+            precio_kg: limpiarCampo(data.precio_kg),
+            pago_efectivo: limpiarCampo(data.pago_efectivo),
+            cant_pacas: limpiarCampo(data.cant_pacas),
+        })).post(route('carga.store'),{
+            onSuccess:()=>{
+                successHttp('Datos registrado correctamente');
+                form.reset();
+            }
+        })
+    }
+
 }
+// Calulo de todo
+const sub_total = () =>{
+    // Calcular el subtotal
+    form.sub_total = (limpiarCampo(form.bruto) - limpiarCampo(form.tara) || 0).toFixed(2);
+    // Calculo del descuento
+    descuento();
+    // Calculcar el total de todo
+    form.total_kg = (limpiarCampo(form.sub_total) - limpiarCampo(form.desc_kg)).toFixed(2);
+
+}
+
+// // Decuento de material
+const descuento = () =>{
+    // Sacar el pocentaje en decimales
+    porciento.value = limpiarCampo(form.desc) / 100 || 0;
+    // Calcula el sub total con el descuento
+    form.desc_kg = (limpiarCampo(form.sub_total) * porciento.value|| 0).toFixed(2);
+}
+// Calcular la cantidad a pagar
+const efectivoPagar = () =>{
+    // HAcer el calculo del pago por efectivo
+    form.pago_efectivo = (limpiarCampo(form.total_kg) * limpiarCampo(form.precio_kg)).toFixed(2);
+}
+// Limpiar todo
+const limpiar = () => {
+    if(props.update)
+    {
+        router.get(route('carga.index'));
+    }
+
+    return false;
+}
+// REport Fecha
+const reportDate = () => {
+    router.get(`/reporte?desde=${formReport.desde}&hasta=${formReport.hasta}`);
+}
+
+
 </script>
 
 
 <template>
     <Head title="Registro" />
     <div class="p-3 bg-gray-400">
+        <!-- REporte General de todo -->
+        <h3 class=" text-blue-800 font-bold text-2xl text-center mb-3">
+            Reporte General
+        </h3>
+        <hr>
+        <div class=" grid grid-cols-2 gap-2 text-center mt-3" >
+            <!-- Total Kg anual -->
+            <div>
+                <p class="label">Total KG. anual</p>
+                <p>{{ formatoDinero(props.reporte.total_kg_anual) }}</p>
+            </div>
+            <!-- Total Pagado Anual -->
+            <div>
+                <p class="label">Total desc. anual</p>
+                <p>{{ formatoDinero(props.reporte.total_desc_anual) }}</p>
+            </div>
+            <!-- Total Pagado Anual -->
+            <div>
+                <p class="label">Total pacas anual</p>
+                <p>{{ formatoDinero(props.reporte.total_cant_pacas) }}</p>
+            </div>
+            <!-- Reporte Mensual -->
+            <div>
+                <p class="label">Total KG mes</p>
+                <p>{{ formatoDinero(props.reporte.total_kg_mensual) }}</p>
+            </div>
+        </div>
+        <hr>
+        <!-- Botones para navegar algunos datos -->
+        <div class="mt-3">
+            <Link
+                class=" bg-blue-600 px-3 py-1 text-white rounded-md"
+                :href="route('carga.show')">
+                Mostrar
+                <i class="fa-solid fa-table-list"></i>
+            </Link>
+        </div>
+        <!-- Formulario de la carga -->
         <form
-            class=" mb-3"
+            class=" mb-3 sm:grid sm:grid-cols-2 sm:gap-3"
             @submit.prevent="submit">
             <h3
-                class="text-xl my-3 font-bold text-center">
+                class="text-xl my-3 font-bold text-blue-800 text-center sm:col-span-full">
                 Registro de mercancia
             </h3>
-            <hr>
+            <hr class=" sm:col-span-full">
             <!-- SUPLIDOR -->
             <div>
                 <label
@@ -127,8 +261,10 @@ const submit = () => {
                 </label>
                 <input
                     v-model="form.desc"
+                    @input="descuento"
+                    v-money="moneyConfig"
                     class="input w-full"
-                    type="number"
+                    type="text"
                     name="desc"
                     id="desc">
             </div>
@@ -166,8 +302,10 @@ const submit = () => {
                 </label>
                 <input
                     v-model="form.bruto"
+                    v-money="moneyConfig"
+                    @input="sub_total"
                     class="input w-full"
-                    type="number"
+                    type="text"
                     name="bruto"
                     id="bruto">
             </div>
@@ -180,8 +318,10 @@ const submit = () => {
                 </label>
                 <input
                     v-model="form.tara"
+                    v-money="moneyConfig"
+                    @input="sub_total"
                     class="input w-full"
-                    type="number"
+                    type="text"
                     name="tara"
                     id="tara">
             </div>
@@ -194,9 +334,11 @@ const submit = () => {
                     Sub total
                 </label>
                 <input
-                    v-model="form.sub_total"
+                    :value="form.sub_total"
+                    readonly
+                    v-money="moneyConfig"
                     class="input w-full"
-                    type="number"
+                    type="text"
                     name="sub-total"
                     id="sub-total">
             </div>
@@ -209,9 +351,11 @@ const submit = () => {
                     Desc. KG
                 </label>
                 <input
-                    v-model="form.desc_kg"
+                    :value="form.desc_kg"
+                    v-money="moneyConfig"
+                    readonly
                     class="input w-full"
-                    type="number"
+                    type="text"
                     name="sub-total"
                     id="sub-total">
             </div>
@@ -223,9 +367,11 @@ const submit = () => {
                     Total KG
                 </label>
                 <input
-                    v-model="form.total_kg"
+                    v-money="moneyConfig"
+                    :value="form.total_kg"
+                    readonly
                     class="input w-full"
-                    type="number"
+                    type="text"
                     name="total-kg"
                     id="total-kg">
             </div>
@@ -274,8 +420,10 @@ const submit = () => {
                 </label>
                 <input
                     v-model="form.precio_kg"
+                    v-money="moneyConfig"
+                    @input="efectivoPagar()"
                     class="input w-full"
-                    type="number"
+                    type="text"
                     name="precio-kg"
                     id="precio-kg">
             </div>
@@ -287,9 +435,11 @@ const submit = () => {
                     Pago efectivo
                 </label>
                 <input
-                    v-model="form.pago_efectivo"
+                    :value="form.pago_efectivo"
+                    readonly
+                    v-money="moneyConfig"
                     class="input w-full"
-                    type="number"
+                    type="text"
                     name="pago-efectivo"
                     id="pago-efectivo">
             </div>
@@ -302,8 +452,9 @@ const submit = () => {
                 </label>
                 <input
                     v-model="form.cant_pacas"
+                    v-money="moneyConfig"
                     class="input w-full"
-                    type="number"
+                    type="text"
                     name="cant-paca"
                     id="cant-paca">
             </div>
@@ -338,6 +489,7 @@ const submit = () => {
                 </label>
                 <input
                     v-model="form.cedula"
+                    v-mask="'###-#######-#'"
                     class="input w-full"
                     type="text"
                     name="cedula"
@@ -427,7 +579,7 @@ const submit = () => {
                     </option>
                 </select>
             </div>
-            <!-- Cedula-->
+            <!-- Placa-->
             <div>
                 <label
                     class="label"
@@ -437,6 +589,7 @@ const submit = () => {
                 <input
                     v-model="form.placa"
                     class="input w-full"
+                    v-mask="'A ######'"
                     type="text"
                     name="placa"
                     id="placa">
@@ -504,18 +657,20 @@ const submit = () => {
                 </select>
             </div>
             <!-- Boton para Registrar los datos -->
-            <div class="mt-3 text-right space-x-3">
+            <div class="mt-3 text-right space-x-3 sm:col-span-full">
                 <button
+                    @click="limpiar()"
                     class=" bg-red-500 px-3 rounded-md font-bold"
                     type="reset">
                     Limpiar
+                    <i class="fa-solid fa-eraser"></i>
                 </button>
                 <button
                     class=" bg-green-500 px-3 rounded-md font-bold"
                     type="submit">
-                    Guardar
+                    {{ update ? 'Actualizar' : 'Guardar'}}
+                    <i class="fa-solid fa-floppy-disk"></i>
                 </button>
-
             </div>
 
         </form>
@@ -528,6 +683,57 @@ const submit = () => {
             <ShowIndex
                 :fecha_actual="fecha_actual"
                 :cargas="cargas"/>
+        </div>
+        <hr>
+        <!-- Impresion del reporte por fecha -->
+        <div class="mt-3">
+            <h3 class="text-lg text-blue-800 text-center font-bold">
+                Impresion de reporte por fecha
+            </h3>
+            <form
+                class=" sm:grid sm:grid-cols-2 sm:gap-3"
+                @submit="reportDate">
+                <!-- Desde -->
+                <div>
+                    <label
+                        class=" block font-bold"
+                        for="desde">
+                        Desde
+                    </label>
+                    <input
+                        v-model="formReport.desde"
+                        class="input w-full"
+                        type="date"
+                        name="desde"
+                        id="desde">
+                </div>
+                <!-- Hasta -->
+                <div>
+                    <label
+                        class=" block font-bold"
+                        for="Hasta">
+                        Hasta
+                    </label>
+                    <input
+                        v-model="formReport.hasta"
+                        class="input w-full"
+                        type="date"
+                        name="hasta"
+                        id="hasta">
+                </div>
+                <!-- Boton para enviar los datos -->
+                <div class="text-right sm:col-span-full">
+                    <button
+                        @click="reportDate"
+                        class="boton-send w-[150px]"
+                        type="button">
+                        Crear reporte
+                        <i class="fa-solid fa-file-lines"></i>
+                    </button>
+                </div>
+
+
+            </form>
         </div>
     </div>
 </template>

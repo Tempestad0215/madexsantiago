@@ -7,6 +7,7 @@ use App\Enums\EstatusTiketEnum;
 use App\Enums\MaterialEnum;
 use App\Enums\MesEnum;
 use App\Enums\VehiculoEnum;
+use App\Http\Requests\CargaRequest;
 use App\Http\Resources\CargaResource;
 use App\Models\carga;
 use Carbon\Carbon;
@@ -31,41 +32,26 @@ class CargaController extends Controller
             return Inertia::render('Index',[
                 'mes' => $mes,
                 'fecha_actual' => Carbon::now()->format('Y-m-d'),
-                'cargas' => $dataFinal
+                'cargas' => $dataFinal,
+                'reporte' => $this->reportGeneral()
             ]);
         } catch (\Throwable $th) {
             throw $th;
         }
     }
     // Guardar los datos
-    public function store(Request $request)
+    public function store(CargaRequest $request)
     {
         try {
-            //code...
-            $validated = $request->validate([
-                'suplidor' => ['required','string','min:4','max:75'],
-                'desc' => ['nullable','numeric'],
-                'material' => ['required', Rule::enum(MaterialEnum::class)],
-                'bruto' => ['required','numeric'],
-                'tara' => ['required','numeric'],
-                'sub_total' => ['required','numeric'],
-                'desc_kg' => ['required','numeric'],
-                'total_kg' => ['required','numeric'],
-                'estatus_tiket' => ['required',Rule::enum(EstatusTiketEnum::class)],
-                'fecha_pago_tiket'=> ['nullable','date'],
-                'precio_kg' => ['nullable','numeric'],
-                'pago_efectivo' => ['required','numeric'],
-                'cant_pacas' => ['required','numeric'],
-                'cedula' => ['nullable','string'],
-                'vehiculo' => ['required',Rule::enum(VehiculoEnum::class)],
-                'color' => ['required',Rule::enum(ColorEnum::class)],
-                'placa' => ['nullable','string'],
-                'mes' => ['required',Rule::enum(MesEnum::class)]
-            ]);
+
             // Guardar los datos
-            carga::create($validated);
+            $carga = carga::create($request->toArray());
+            // Carga full de todo
+            $cargaFianl = new CargaResource($carga);
             // Retornar hacia atras con el exito
-            return back();
+            return to_route('carga.print',[
+                'carga' => $cargaFianl
+            ]);
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -74,7 +60,15 @@ class CargaController extends Controller
     public function show(Request $request)
     {
         try {
-
+            // conseguir los datos
+            $data = $this->getData($request);
+            // Cambiar los datos en el resource
+            $dataFinal = CargaResource::collection($data)->response()->getData();
+            // Devovler la vista con los datos
+            return Inertia::render('Partials/ShowIndex',[
+                'cargas' => $dataFinal,
+                'fecha_actual' => Carbon::now()->format('Y-m-d')
+            ]);
 
         } catch (\Throwable $th) {
             throw $th;
@@ -106,6 +100,8 @@ class CargaController extends Controller
             // Obteneer los datos regitrados
             $dataFinal = CargaResource::collection($data)->response()->getData(true);
 
+
+
            // Devolver la vista con los datos
            return Inertia::render('Index',[
             'mes' => $mes,
@@ -117,6 +113,105 @@ class CargaController extends Controller
         } catch (\Throwable $th) {
             throw $th;
         }
+    }
+    // Aactualizar los datos
+    public function update(carga $carga, CargaRequest $request)
+    {
+        try {
+            // Actualzar los datos
+            $carga->update($request->toArray());
+            // Devolver hacia atras
+            return back();
+
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+
+    // Elimianr el registro
+    public function destroy(carga $carga)
+    {
+        try {
+            // Eliminar el dato selecionnado
+            $carga->delete();
+            // Devolverse hacia atraas
+            return back();
+
+
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+    // Impresion de la carga
+    public function print(carga $carga)
+    {
+        try {
+            // Cambiar algunos valores devuelto
+            $dataFinal = new CargaResource($carga);
+            // DEvolver la vista con los datos
+            return Inertia::render('Partials/WindowPrint',[
+                'carga' => $dataFinal
+            ]);
+
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+
+    //Hacer el reporte por dia para imprimir
+    public function reporteFecha(Request $request)
+    {
+         // Desde
+         $desde = $request->desde ?? Carbon::now()->format('Y-m-d');
+         // Hasta
+         $hasta = $request->hasta ?? Carbon::now()->format('Y-m-d');
+        // Sacr los datos
+        $data = carga::where(function(Builder $query) use ($desde, $hasta){
+            $query->whereDate('created_at','>=', $desde)
+            ->whereDate('created_at','<=', $hasta);
+        })
+        ->select('total_kg','desc_kg','pago_efectivo','cant_pacas')
+        ->get();
+        // Sumar todos los dtos
+        $reporteFecha = [
+            'total_kg' => $data->sum('total_kg'),
+            'desc_kg' => $data->sum('desc_kg'),
+            'pago_efectivo' => $data->sum('pago_efectivo'),
+            'cant_pacas' => $data->sum('cant_pacas'),
+            'desde' => $desde,
+            'hasta' => $hasta
+        ];
+
+        // Devolver la vista de imrpesion
+        return Inertia::render('Partials/ReportPrint',[
+            'reporte' => $reporteFecha
+        ]);
+
+    }
+
+    // Reporte de todos los datos
+    private function reportGeneral(): array
+    {
+        // A;os
+        $year = Carbon::now()->year;
+        $month = Carbon::now()->month;
+        $totalKgMonth = carga::whereMonth('created_at',$month)->sum('total_kg');
+        $totalKgYear = carga::whereYear('created_at',$year)->sum('total_kg');
+        $totalDescYear = carga::whereYear('created_at',$year)->sum('desc_kg');
+        $efectivo = carga::whereYear('created_at',$year)->sum('pago_efectivo');
+        $cantPacas = carga::whereYear('created_at',$year)->sum('cant_pacas');
+
+        return [
+            'total_kg_mensual' => $totalKgMonth,
+            'total_kg_anual' => $totalKgYear,
+            'total_desc_anual' => $totalDescYear,
+            'total_efectivo' => $efectivo,
+            'total_cant_pacas' => $cantPacas
+        ];
+
     }
 
     // Metodo para buscar la orden

@@ -21,7 +21,7 @@ defineProps({
             {{ label }}
         </h5>
         <p class=" px-4">
-            {{ data }}
+            {{ data ?? 'null' }}
         </p>
     </div>
 </template>
