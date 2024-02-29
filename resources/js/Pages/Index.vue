@@ -525,6 +525,7 @@ const reportDate = () => {
                 <!-- Mostrar el error -->
                 <Error :data="form.errors.cedula"/>
             </div>
+
             <!-- Vehiculo-->
             <div>
                 <label
