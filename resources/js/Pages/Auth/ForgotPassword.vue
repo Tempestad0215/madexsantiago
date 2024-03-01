@@ -1,11 +1,11 @@
 <script setup>
 import { Head, useForm } from '@inertiajs/vue3';
-import JetAuthenticationCard from '@/Jetstream/AuthenticationCard.vue';
-import JetAuthenticationCardLogo from '@/Jetstream/AuthenticationCardLogo.vue';
-import JetButton from '@/Jetstream/Button.vue';
-import JetInput from '@/Jetstream/Input.vue';
-import JetLabel from '@/Jetstream/Label.vue';
-import JetValidationErrors from '@/Jetstream/ValidationErrors.vue';
+import JetAuthenticationCard from '@component/AuthenticationCard.vue';
+import JetAuthenticationCardLogo from '@component/AuthenticationCardLogo.vue';
+import JetButton from '@component/Button.vue';
+import JetInput from '@component/Input.vue';
+import JetLabel from '@component/Label.vue';
+import JetValidationErrors from '@component/ValidationErrors.vue';
 
 defineProps({
     status: String,

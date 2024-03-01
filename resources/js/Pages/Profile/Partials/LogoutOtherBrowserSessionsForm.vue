@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useForm } from '@inertiajs/vue3';
-import JetActionMessage from '../../../Jetstream/ActionMessage.vue';
-import JetActionSection from '../../../Jetstream/ActionSection.vue';
-import JetButton from '../../../Jetstream/Button.vue';
-import JetDialogModal from '../../../Jetstream/DialogModal.vue';
-import JetInput from '../../../Jetstream/Input.vue';
-import JetInputError from '../../../Jetstream/InputError.vue';
-import JetSecondaryButton from '../../../Jetstream/SecondaryButton.vue';
+import JetActionMessage from '@component/ActionMessage.vue';
+import JetActionSection from '@component/ActionSection.vue';
+import JetButton from '@component/Button.vue';
+import JetDialogModal from '@component/DialogModal.vue';
+import JetInput from '@component/Input.vue';
+import JetInputError from '@component/InputError.vue';
+import JetSecondaryButton from '@component/SecondaryButton.vue';
 import type { sessionI } from '../../../interfaces/session';
 import type { PropType } from 'vue';
 

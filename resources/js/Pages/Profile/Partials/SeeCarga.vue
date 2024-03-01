@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { PropType } from 'vue';
-import { cargaResourceI } from '../../interfaces/carga';
+import { cargaResourceI } from '@interfaces/carga';
 import { Head, router } from '@inertiajs/vue3';
 import DataCarga from './DataCarga.vue';
-import { formatoDinero } from '../../global/helpers';
+import { formatoDinero } from '@global/helpers';
 
 // Propiedades
 const props = defineProps({
@@ -34,7 +34,7 @@ const atras = () => {
 <template>
     <Head title="Ver registro"/>
     <div
-        class=" bg-gray-400 px-5 pb-7">
+        class=" px-5 pb-7">
         <h4
             class="py-5 text-center font-bold text-xl text-blue-800">
             Mostrando el registro N° {{ carga.data.id }}
@@ -46,7 +46,7 @@ const atras = () => {
                 class="boton-send "
                 type="button">
                 Atras
-                <i class="fa-solid fa-rotate-left"></i>
+                <i class="fa-solid fa-arrow-left-long"></i>
             </button>
             <button
                 @click="editar(carga.data.id)"

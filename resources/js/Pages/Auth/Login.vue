@@ -17,7 +17,7 @@ const typePassword = ref("password")
 const ulrLogo = window.location.origin+'/storage/images/maluhia.svg'
 
 const form = useForm({
-    email: '',
+    user: '',
     password: '',
     remember: false,
     _token: usePage().props.csrf_token
@@ -49,30 +49,28 @@ const showPassword = () =>{
 
 <template>
     <Head title="Inicio" />
-    <div class="mt-20">
+    <div class="pt-20">
         <form
-            class="mx-3 sm:max-w-sm sm:mx-auto"
+            class="mx-3 sm:max-w-sm sm:mx-auto bg-gray-300 p-6 rounded-md shadow-lg"
             @submit.prevent="submit">
-            <!-- logo de la app -->
-            <img
-                class=" mx-auto"
-                width="200"
-                :src="ulrLogo"
-                alt="logo de la app">
+            <!-- titulo de la app -->
+            <h3 class=" text-5xl font-bold text-center">
+                AVANCE
+            </h3>
             <div>
                 <label
                     class=""
-                    for="email" >Correo
+                    for="user" >Usuario
                 </label>
                 <input
                     class="input w-full "
-                    id="email"
-                    v-model="form.email"
-                    type="email">
+                    id="user"
+                    v-model="form.user"
+                    type="text">
                 <!-- Mensaje de error -->
                 <Error
-                    v-if="form.errors.email"
-                    :data="form.errors.email" />
+                    v-if="form.errors.user"
+                    :data="form.errors.user" />
 
             </div>
 
@@ -103,21 +101,21 @@ const showPassword = () =>{
                     :data="form.errors.password" />
             </div>
             <!-- Boton de recuerdame -->
-            <div class="mt-3">
+            <!-- <div class="mt-3">
                 <input
                     class=" peer sr-only"
                     type="checkbox"
                     v-model="form.remember"
                     id="remember">
                 <label
-                    class="px-2 rounded-md select-none bg-orange-500 peer-checked:bg-cyan-300"
+                    class="px-2 rounded-md bg-blue-400 py-1"
                     for="remember">
                     Recuerdame
                     <i class="fa-solid fa-brain"></i>
                 </label>
-            </div>
+            </div> -->
             <!-- Botones -->
-            <div class="text-right">
+            <div class="text-right mt-4">
                 <!-- <Link
                     v-if="canResetPassword"
                     :href="route('password.request')"

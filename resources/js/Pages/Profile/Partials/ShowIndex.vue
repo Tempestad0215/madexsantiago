@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { PropType } from 'vue';
-import { paginationI } from '../../interfaces/carga';
+import { paginationI } from '@interfaces/carga';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
-import { formatoDinero } from '../../global/helpers';
+import { formatoDinero } from '@/global/helpers';
 import Swal from 'sweetalert2';
-import { successHttp } from '../../global/alert';
+import { successHttp } from '@/global/alert';
 import { onMounted } from 'vue';
 import { ref } from 'vue';
 import Error from './Error.vue';
 
 
+const page = usePage();
 const props = defineProps({
     cargas:{
         type: Object as PropType<paginationI>,
@@ -30,7 +31,7 @@ const form = useForm({
 });
 
 onMounted(()=>{
-    componente.value = usePage().component
+    componente.value = page.component
 });
 
 
@@ -69,14 +70,19 @@ const eliminarCarga = (id:number) => {
         }
     });
 }
+// Funciones
+const back = () =>{
+    window.history.back();
+}
 
 </script>
 
 
 <template>
     <Head title="Registro"/>
+
     <!-- Datos de la ventana -->
-    <div class=" px-3 pt-5 bg-gray-400 pb-6">
+    <div class=" px-3 pt-5 pb-6">
         <!-- Botones para navegar algunos datos -->
         <div
             v-if="componente === 'Partials/ShowIndex'"
@@ -86,6 +92,17 @@ const eliminarCarga = (id:number) => {
                 :href="route('carga.index')">
                 Registrar
                 <i class="fa-solid fa-plus"></i>
+            </Link>
+        </div>
+        <div
+            v-if="page.url === '/show'"
+            class="my-3">
+            <Link
+                @click="back()"
+                class=" bg-blue-800 px-3 py-2 text-white rounded-md"
+                href="#">
+                Atras
+                <i class="fa-solid fa-arrow-left-long"></i>
             </Link>
         </div>
         <hr>

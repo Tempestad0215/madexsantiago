@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { Head, } from '@inertiajs/vue3';
-import { cargaResourceI } from '../../interfaces/carga';
+import { cargaResourceI } from '@interfaces/carga';
 import { reactive, onMounted, PropType } from 'vue';
 import printJS from 'print-js';
-import {formatoDinero} from '../../global/helpers';
+import {formatoDinero} from '@global/helpers';
 
 
 const props = defineProps({
@@ -30,21 +30,26 @@ onMounted(()=>{
         print();
     },500);
 });
+// Retroceder despues de imprimir
+window.addEventListener("afterprint",()=>{
+    window.history.back();
+});
 
 // Fnciond e imprimti
 const print = ()=>{
     // Tomar la fecha
     // Imprimir todo
-    printJS({
-        printable: 'printable',
-        type: 'html',
-        scanStyles: true,
-        font_size: '9pt',
-        documentTitle: 'Avance Industrial',
-        onPrintDialogClose: () =>{
-            window.history.back();
-        }
-    });
+    window.print();
+    // printJS({
+    //     printable: 'printable',
+    //     type: 'html',
+    //     scanStyles: true,
+    //     font_size: '9pt',
+    //     documentTitle: 'Avance Industrial',
+    //     onPrintDialogClose: () =>{
+    //         window.history.back();
+    //     }
+    // });
 }
 
 

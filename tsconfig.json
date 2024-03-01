@@ -11,7 +11,15 @@
         "forceConsistentCasingInFileNames":true,
         "noEmit":true,
         "isolatedModules":true,
-        "types": ["vite/client"]
+        "types": ["vite/client"],
+        "paths": {
+            "@/*" : ["./resources/js/*"],
+            "@partials/*" : ["./resources/js/Pages/Profile/Partials/*"],
+            "@component/*": ["./resources/js/Components/*"],
+            "@route": ["./vendor/tightenco/ziggy/src/js"],
+            "@interfaces/*":["./resources/js/interfaces/*"],
+            "@global/*": ["./resources/js/global/*"]
+        }
     },
     "include":[
         "resources/js/**/*.ts",

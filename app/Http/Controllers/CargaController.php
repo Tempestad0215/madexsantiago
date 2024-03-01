@@ -59,7 +59,7 @@ class CargaController extends Controller
             // Cambiar los datos en el resource
             $dataFinal = CargaResource::collection($data)->response()->getData();
             // Devovler la vista con los datos
-            return Inertia::render('Partials/ShowIndex',[
+            return Inertia::render('Profile/Partials/ShowIndex',[
                 'cargas' => $dataFinal,
                 'fecha_actual' => Carbon::now()->format('Y-m-d')
             ]);
@@ -75,7 +75,7 @@ class CargaController extends Controller
             // Ver los datos seleccionada
             $cargaFinal = new CargaResource($carga);
             // Devolver los datos
-            return Inertia::render('Partials/SeeCarga',[
+            return Inertia::render('Profile/Partials/SeeCarga',[
                 'carga' => $cargaFinal
             ]);
 
@@ -102,7 +102,8 @@ class CargaController extends Controller
             'fecha_actual' => Carbon::now()->format('Y-m-d'),
             'cargas' => $dataFinal,
             'carga_edit' => $carga,
-            'update' => true
+            'update' => true,
+            'reporte' => $this->reportGeneral()
         ]);
         } catch (\Throwable $th) {
             throw $th;
@@ -145,7 +146,7 @@ class CargaController extends Controller
             // Cambiar algunos valores devuelto
             $dataFinal = new CargaResource($carga);
             // DEvolver la vista con los datos
-            return Inertia::render('Partials/WindowPrint',[
+            return Inertia::render('Profile/Partials/WindowPrint',[
                 'carga' => $dataFinal
             ]);
 
@@ -180,7 +181,7 @@ class CargaController extends Controller
         ];
 
         // Devolver la vista de imrpesion
-        return Inertia::render('Partials/ReportPrint',[
+        return Inertia::render('Profile/Partials/ReportPrint',[
             'reporte' => $reporteFecha
         ]);
 

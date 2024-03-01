@@ -2,9 +2,9 @@
 import { Head } from '@inertiajs/vue3';
 import { onMounted } from 'vue';
 import { reactive } from 'vue';
-import {reporteFechaI} from '../../interfaces/carga';
+import {reporteFechaI} from '@interfaces/carga';
 import { PropType } from 'vue';
-import { formatoDinero } from '../../global/helpers';
+import { formatoDinero } from '@global/helpers';
 import printJS from 'print-js';
 
 const props = defineProps({
@@ -28,18 +28,23 @@ onMounted(()=>{
     },500);
 });
 
+window.addEventListener("afterprint",()=>{
+    window.history.back();
+});
+
 // funciond e imprimir
 const printReport = ():void =>{
-    printJS({
-        printable: 'printable',
-        type: 'html',
-        scanStyles: true,
-        font_size: '12pt',
-        documentTitle: 'Avance Industrial',
-        onPrintDialogClose: () =>{
-            window.history.back();
-        }
-    });
+    window.print();
+    // printJS({
+    //     printable: 'printable',
+    //     type: 'html',
+    //     scanStyles: true,
+    //     font_size: '12pt',
+    //     documentTitle: 'Avance Industrial',
+    //     onPrintDialogClose: () =>{
+    //         window.history.back();
+    //     }
+    // });
 }
 
 

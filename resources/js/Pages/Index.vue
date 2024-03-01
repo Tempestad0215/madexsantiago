@@ -1,15 +1,13 @@
 <script setup lang="ts">
-import { Head, Link, router, useForm} from '@inertiajs/vue3';
-import ShowIndex from './Partials/ShowIndex.vue';
+import { Head, router, useForm, Link} from '@inertiajs/vue3';
 import {successHttp} from '../global/alert'
 import { onMounted, PropType } from 'vue';
 import { paginationI,reporteGeneralI , CargaI } from '../interfaces/carga';
-import { moneyConfig } from '../global/moneyConfig';
-import { formatoDinero, limpiarCampo } from '../global/helpers';
-import { reactive } from 'vue';
-import { ref } from 'vue';
-import Error from './Partials/Error.vue';
-
+import { reactive, ref } from 'vue';
+import Error from '@partials/Error.vue';
+import Showindex from '@partials/ShowIndex.vue';
+import { formatoDinero, limpiarCampo } from '@/global/helpers';
+import { moneyConfig } from '@/global/moneyConfig';
 
 const props = defineProps({
     mes:{
@@ -184,6 +182,10 @@ const limpiar = () => {
 const reportDate = () => {
     router.get(`/reporte?desde=${formReport.desde}&hasta=${formReport.hasta}`);
 }
+// Salir de la aopp
+const salir = ()=>{
+    router.post(route('logout'));
+}
 
 
 </script>
@@ -191,7 +193,32 @@ const reportDate = () => {
 
 <template>
     <Head title="Registro" />
-    <div class="p-3 bg-gray-400">
+    <div class="p-3 ">
+        <div class="pb-3">
+            <h3 class=" text-blue-800 font-bold text-2xl text-center mb-3">
+                Datos del usuario
+            </h3>
+            <div class=" flex justify-between">
+                <Link
+                    class="bg-blue-700 px-3 py-2 rounded-md text-white"
+                    href="/user/profile">
+                    Perfil de usuario
+                    <i class="fa-solid fa-user"></i>
+                </Link>
+                <Link
+                    @click="salir()"
+                    class="bg-blue-700 px-3 py-2 rounded-md text-white"
+                    href="#">
+                    Salir
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </Link>
+
+            </div>
+
+        </div>
+        <hr>
+
+
         <!-- REporte General de todo -->
         <h3 class=" text-blue-800 font-bold text-2xl text-center mb-3">
             Reporte General
@@ -719,7 +746,7 @@ const reportDate = () => {
             <h3 class="text-lg  text-blue-900 font-bold text-center">
                 Datos registrados
             </h3>
-            <ShowIndex
+            <Showindex
                 :fecha_actual="fecha_actual"
                 :cargas="cargas"/>
         </div>

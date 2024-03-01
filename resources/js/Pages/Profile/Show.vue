@@ -1,19 +1,13 @@
 <script setup lang="ts" >
-import JetSectionBorder from '../../Jetstream/SectionBorder.vue';
+import JetSectionBorder from '@component/SectionBorder.vue';
 import LogoutOtherBrowserSessionsForm from './Partials/LogoutOtherBrowserSessionsForm.vue';
 import TwoFactorAuthenticationForm from './Partials/TwoFactorAuthenticationForm.vue';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm.vue';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.vue';
-import Inicio from '../Partials/Inicio.vue'
-import AnclaHeader from '../Partials/AnclaHeader.vue';
-import {  usePage } from '@inertiajs/vue3';
-import { isDeparmentCorrect  } from "../../Global/helpers";
-import { useUserAuth } from '../../store/userAuthStore';
+import {  Head, usePage } from '@inertiajs/vue3';
 import type {propsUserI} from "../../interfaces/usePage"
 import { sessionI } from '../../interfaces/session';
-
 // Definiar el estore
-const storeUserAuth = useUserAuth();
 
 // Definiar la props
 defineProps({
@@ -23,32 +17,31 @@ defineProps({
 
 const page:propsUserI = usePage();
 
-
+// Funciones
+const back = () =>{
+    window.history.back();
+}
 
 
 </script>
 
 <template>
-    <Inicio>
-        <template #header>
-            <AnclaHeader
-                v-if="isDeparmentCorrect(storeUserAuth.userAuth.deparment,'ADMINFULL')"
-                icono="fa-solid fa-user-plus"
-                data-label="Registrar"
-                :url="route('user.registrar')"/>
-            <AnclaHeader
-                :class="true ? '' : 'col-span-full'"
-                icono="fa-solid fa-user"
-                data-label="Perfil"
-                :active="true"
-                url="/user/profile"/>
-        </template>
-        <hr>
-        <div class="mt-3">
-            <div>
-                <h4 class="titulo text-lg">
-                    Perfil de usuario</h4>
+    <Head title="Perfil"/>
+        <div class="m-3">
+            <div class="mb-3">
+                <h4 class="titulo text-2xl text-center text-blue-700 font-bold">
+                    Perfil de usuario
+                </h4>
+                <button
+                    @click="back()"
+                    class="bg-blue-700 px-2 rounded-md py-1 text-white"
+                    title="Retroceder"
+                    type="button">
+                    Atras
+                    <i class="fa-solid fa-arrow-left-long"></i>
+                </button>
             </div>
+            <hr class=" clear-both">
             <div class="content-perfil-user">
                 <div v-if="page.props.jetstream.canUpdateProfileInformation">
                     <UpdateProfileInformationForm
@@ -64,17 +57,17 @@ const page:propsUserI = usePage();
                     <JetSectionBorder />
                 </div>
 
-                <div v-if="page.props.jetstream.canManageTwoFactorAuthentication">
+                <!-- <div v-if="page.props.jetstream.canManageTwoFactorAuthentication">
                     <TwoFactorAuthenticationForm
                         :requires-confirmation="confirmsTwoFactorAuthentication"
                         class=""
                     />
 
                     <JetSectionBorder />
-                </div>
+                </div> -->
 
-                <LogoutOtherBrowserSessionsForm
-                     :sessions="sessions" class="" />
+                <!-- <LogoutOtherBrowserSessionsForm
+                     :sessions="sessions" class="" /> -->
 
                 <!-- <template v-if="$page.props.jetstream.hasAccountDeletionFeatures">
                     <JetSectionBorder />
@@ -84,5 +77,4 @@ const page:propsUserI = usePage();
             </div>
 
         </div>
-    </Inicio>
 </template>

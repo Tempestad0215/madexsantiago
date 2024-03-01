@@ -1,13 +1,13 @@
 <script setup lang="ts" >
 import { ref } from 'vue';
 import { router, usePage, Link, useForm } from '@inertiajs/vue3';
-import JetFormSection from '../../../Jetstream/FormSection.vue';
-import JetInputError from '../../../Jetstream/InputError.vue';
-import JetLabel from '../../../Jetstream/Label.vue';
-import JetActionMessage from '../../../Jetstream/ActionMessage.vue';
-import JetSecondaryButton from '../../../Jetstream/SecondaryButton.vue';
+import JetFormSection from '@component/FormSection.vue';
+import JetInputError from '@component/InputError.vue';
+import JetLabel from '@component/Label.vue';
+import JetActionMessage from '@component/ActionMessage.vue';
+import JetSecondaryButton from '@component/SecondaryButton.vue';
 import { propsUserI } from '../../../interfaces/usePage';
-import Error from '../../Partials/Error.vue';
+import Error from '@partials/Error.vue';
 
 const props = defineProps({
     user: Object,
@@ -78,7 +78,8 @@ const clearPhotoFileInput = () => {
 </script>
 
 <template>
-    <JetFormSection @submitted="updateProfileInformation">
+    <JetFormSection
+        @submitted="updateProfileInformation">
         <template #title>
             Información sobre el perfil
         </template>

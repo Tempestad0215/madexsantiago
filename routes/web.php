@@ -1,9 +1,7 @@
 <?php
 
 use App\Http\Controllers\CargaController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,7 +13,8 @@ use Inertia\Inertia;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::middleware('guest')->group(function(){
+
+Route::middleware('auth')->group(function(){
     Route::get('/', [CargaController::class, 'index'])->name('carga.index');
     Route::post('/',[CargaController::class,'store'])->name('carga.store');
     route::get('/show',[CargaController::class,'show'])->name('carga.show');
@@ -28,5 +27,6 @@ Route::middleware('guest')->group(function(){
     // Pruebad e todo
     Route::get('/reporte',[CargaController::class,'ReporteFecha'])->name('carga.reporte');
 });
+// Auth::routes(["register" => false]);
 
 
