@@ -105,7 +105,6 @@ const back = () =>{
                 <i class="fa-solid fa-arrow-left-long"></i>
             </Link>
         </div>
-        <hr>
         <!-- Formulario de los datos -->
         <form
             class="mt-3 "

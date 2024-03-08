@@ -23,7 +23,6 @@ Route::middleware('auth')->group(function(){
     Route::get('/print/{carga}',[CargaController::class,'print'])->name('carga.print');
     Route::delete('/eliminar/{carga}',[CargaController::class,'destroy'])->name('carga.destroy');
     Route::put('/actualizar/{carga}',[CargaController::class,'update'])->name('carga.update');
-
     // Pruebad e todo
     Route::get('/reporte',[CargaController::class,'ReporteFecha'])->name('carga.reporte');
 });

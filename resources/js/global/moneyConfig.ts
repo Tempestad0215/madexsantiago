@@ -3,6 +3,6 @@ export const moneyConfig = {
     thousands: ',',
     prefix: '',
     suffix: '',
-    precision: 2,
+    precision: 0,
     masked: false
 }

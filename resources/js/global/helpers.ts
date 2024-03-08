@@ -1,8 +1,14 @@
 
 // Limpiar los campos
-export const limpiarCampo = (campo:string):number => {
-    // Devolver los datos
-    return parseFloat(campo?.replace(/,/g,''));
+export const limpiarCampo = (campo:string | number):number => {
+    let campoFinal = 0;
+    if(typeof(campo) === "string")
+    {
+        return parseFloat(campo?.replace(/,/g,''));
+    }
+
+    return campo;
+
 }
 
 // Para cambiar el formato del dinero
