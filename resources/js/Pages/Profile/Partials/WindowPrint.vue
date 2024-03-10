@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, } from '@inertiajs/vue3';
 import { cargaResourceI } from '@interfaces/carga';
-import { reactive, onMounted, PropType } from 'vue';
+import { reactive, onMounted, PropType, ref } from 'vue';
 import printJS from 'print-js';
 import {formatoDinero} from '@global/helpers';
 
@@ -19,16 +19,30 @@ const fecha = reactive({
     printDate:"",
 });
 // Fecha de impresionm
-
+const fechaPago = ref("");
+const isAvance = ref(false);
 // Al momento de cargar
 onMounted(()=>{
+
+    // Fecha de creacion
     fecha.fecha = props.carga.data.creacion.split(" ")[0];
     fecha.hora = props.carga.data.creacion.split(" ")[1];
     fecha.printDate = new Date().toLocaleString();
+
+
     // Imprimir al momento de cargar'
     setTimeout(()=>{
         print();
     },500);
+
+
+    // si es de avance o madex
+    isAvance.value = props.carga.data.tipo ? false : true
+
+    // Limpiar la cadena
+    fechaPago.value = props.carga.data.fecha_pago_tiket.replace('T',' ');
+
+
 });
 // Retroceder despues de imprimir
 window.addEventListener("afterprint",()=>{
@@ -38,18 +52,8 @@ window.addEventListener("afterprint",()=>{
 // Fnciond e imprimti
 const print = ()=>{
     // Tomar la fecha
-    // Imprimir todo
     window.print();
-    // printJS({
-    //     printable: 'printable',
-    //     type: 'html',
-    //     scanStyles: true,
-    //     font_size: '9pt',
-    //     documentTitle: 'Avance Industrial',
-    //     onPrintDialogClose: () =>{
-    //         window.history.back();
-    //     }
-    // });
+    window.history.back();
 }
 
 
@@ -65,7 +69,7 @@ const print = ()=>{
                 <!-- Primeara linea -->
                 <tr>
                     <th>
-                        AVANCE INDUSTRIAL S.R.L
+                        {{ isAvance ? 'AVANCE INDUSTRIAL SRL' : 'MADEX RECYCLING SRL' }}
                     </th>
                     <th>
                         Fecha Impresion: {{ fecha.printDate }}
@@ -79,7 +83,7 @@ const print = ()=>{
                 <!-- RNC de la empresa -->
                 <tr>
                     <th colspan="2">
-                        RNC N° 101-08329-8
+                        RNC N°{{ isAvance ? '101-08329-8' : '131-11042-8' }}
                     </th>
                 </tr>
                 <!-- Informacion de la  -->
@@ -141,15 +145,15 @@ const print = ()=>{
                         Pac/Suel..........: {{ carga.data.suelto_paca }}
                     </td>
                     <td>
-                        Peso Bruto.......: {{ formatoDinero(carga.data.bruto) }} KG.
+                        Peso Bruto.......: {{ carga.data.bruto }} KG.
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        Tara.................: {{ formatoDinero(carga.data.tara) }} KG.
+                        Tara.................: {{ carga.data.tara }} KG.
                     </td>
                     <td>
-                        Peso Neto........: {{ formatoDinero(carga.data.sub_total) }} KG.
+                        Peso Neto........: {{ carga.data.sub_total }} KG.
                     </td>
                 </tr>
                 <!-- Calculo de peso -->
@@ -161,25 +165,30 @@ const print = ()=>{
                 <!-- Datos del calculo -->
                 <tr>
                     <td>
-                        Desc. % Aplicados.....: {{ formatoDinero(carga.data.desc) }} %
+                        Desc. % Aplicados.....:
+                        {{ carga.data.desc }} %
                     </td>
                     <td>
-                        Prec. X KG. $.......: {{ formatoDinero(carga.data.precio_kg) }}
+                        Prec. X KG. $.......: {{ carga.data.precio_kg }}
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        KG. Descontado.........: {{ formatoDinero(carga.data.desc_kg)
+                        KG. Descontado.........: {{ carga.data.desc_kg
                          }} KG.
                     </td>
                     <td>
-                        Total KG. Neto.....: {{ formatoDinero(carga.data.total_kg) }} KG.
+                        Total KG. Neto.....: {{ carga.data.total_kg }} KG.
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        Monto Pagado............:
-                        {{ formatoDinero(carga.data.pago_efectivo) }}
+                        Monto Pagado $.........:
+                        {{ carga.data.pago_efectivo }}
+                    </td>
+                    <td>
+                        Fecha Pago Tiket.....:
+                        {{ fechaPago }}
                     </td>
                 </tr>
                 <tr>

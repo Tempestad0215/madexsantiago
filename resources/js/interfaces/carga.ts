@@ -12,7 +12,6 @@ export interface CargaI{
     fecha_pago_tiket: string | null;
     id: number;
     material: number;
-    mes: number;
     pago_efectivo: number;
     placa: string | null;
     precio_kg: number;
@@ -20,8 +19,9 @@ export interface CargaI{
     suelto_paca: number;
     suplidor: string;
     tara: number;
-    total_kg: number
-    vehiculo: number
+    total_kg: number;
+    vehiculo: number;
+    tipo: number;
 }
 
 
@@ -42,7 +42,6 @@ export interface cargaDefaultI{
     fecha_pago_tiket: string | null;
     id: number;
     material: string;
-    mes: string;
     pago_efectivo: number;
     placa: string | null;
     precio_kg: number;
@@ -52,6 +51,7 @@ export interface cargaDefaultI{
     tara: number;
     total_kg: number;
     vehiculo: string;
+    tipo: boolean;
 }
 
 export interface paginationI{
@@ -95,5 +95,6 @@ export interface reporteFechaI{
     cant_pacas: number;
     desde: string;
     hasta: string;
+    isAvance: boolean;
 }
 

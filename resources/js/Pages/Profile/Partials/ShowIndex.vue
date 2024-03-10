@@ -2,7 +2,6 @@
 import { PropType } from 'vue';
 import { paginationI } from '@interfaces/carga';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
-import { formatoDinero } from '@/global/helpers';
 import Swal from 'sweetalert2';
 import { successHttp } from '@/global/alert';
 import { onMounted } from 'vue';
@@ -25,9 +24,7 @@ const props = defineProps({
 const componente = ref("");
 // Datos del formulario
 const form = useForm({
-    suplidor:"",
-    desde: "",
-    hasta: ""
+    datos:"",
 });
 
 onMounted(()=>{
@@ -36,19 +33,19 @@ onMounted(()=>{
 
 
 // Buscar los datos
-const submit = () => {
+const submit = ():void => {
     // Buscar losd atos con esto
-    form.get(`?suplidor=${form.suplidor}&desde=${form.desde}&hasta=${form.hasta}`,{
+    form.get(`?datos=${form.datos}`,{
         preserveScroll: true,
-        preserveState: true
+        preserveState: true,
     });
 }
 // Para ver la carga
-const verCarga = (id:number)=>{
+const verCarga = (id:number):void =>{
     router.get(route('carga.see',{id}));
 }
 // Eliminar la carga
-const eliminarCarga = (id:number) => {
+const eliminarCarga = (id:number):void => {
     Swal.fire({
         title: "Desea eliminar?",
         text: "Los cambios realizados son irreversible!",
@@ -64,15 +61,12 @@ const eliminarCarga = (id:number) => {
             onSuccess:()=>{
                 // Mensaje de exito al eliminar
                 successHttp("Registro eliminado corectamente");
-            }
+            },
+            preserveScroll: true
         });
 
         }
     });
-}
-// Funciones
-const back = () =>{
-    window.history.back();
 }
 
 </script>
@@ -95,67 +89,33 @@ const back = () =>{
             </Link>
         </div>
         <div
-            v-if="page.url === '/show'"
+            v-if="page.url.startsWith('/show')"
             class="my-3">
             <Link
-                @click="back()"
                 class=" bg-blue-800 px-3 py-2 text-white rounded-md"
-                href="#">
+                :href="route('carga.index')">
                 Atras
                 <i class="fa-solid fa-arrow-left-long"></i>
             </Link>
         </div>
         <!-- Formulario de los datos -->
         <form
-            class="mt-3 "
+            class="mt-3 flex items-center "
             @submit.prevent="submit">
             <!-- Buscar los datos -->
             <div>
                 <!-- Para buscar los datos en la tabla -->
                 <input
-                    v-model="form.suplidor"
-                    class=" input w-full"
+                    v-model="form.datos"
+                    class=" input w-[500px]"
                     placeholder="Buscar"
                     type="text">
                 <!-- Error -->
-                <Error :data="form.errors.suplidor"/>
+                <Error :data="form.errors.datos"/>
             </div>
-            <!-- Fecha para buscar los datos -->
-            <div class="my-3 space-y-1">
-                <div>
-                    <label
-                        class="label"
-                        for="desde">
-                        Desde
-                    </label>
-                    <input
-                        v-model="form.desde"
-                        class="input w-full"
-                        type="date"
-                        name="desde"
-                        id="desde">
-                    <!-- Error -->
-                    <Error :data="form.errors.desde"/>
-                </div>
-                    <!-- Hasta -->
-                <div>
-                    <label
-                        class="label"
-                        for="hasta">
-                        Hasta
-                    </label>
-                    <input
-                        v-model="form.hasta"
-                        class="input w-full"
-                        type="date"
-                        name="hasta"
-                        id="hasta">
-                    <!-- Error -->
-                    <Error :data="form.errors.hasta"/>
-                </div>
-            </div>
+
             <!-- Boton para buscar los datos -->
-            <div class=" text-right my-3">
+            <div class=" text-right my-3 ml-5">
                 <button
                     class="boton-send"
                     type="submit">
@@ -164,7 +124,9 @@ const back = () =>{
                 </button>
             </div>
         </form>
-        <hr>
+
+
+
 
         <!-- Datos de la tabla de todo -->
         <table
@@ -199,15 +161,15 @@ const back = () =>{
                     </td>
                     <td
                         class="hidden-field-lg">
-                        {{ formatoDinero(item.bruto) }}
+                        {{ item.bruto }}
                     </td>
                     <td
                         class="hidden-field-lg">
-                        {{ formatoDinero(item.tara) }}
+                        {{ item.tara }}
                     </td>
                     <td
                         class="hidden-field-lg">
-                        {{ formatoDinero(item.total_kg) }}
+                        {{ item.total_kg }}
                     </td>
                     <td class=" truncate max-w-[75px]">
                         {{ item.estatus_tiket }}
@@ -215,15 +177,47 @@ const back = () =>{
                     <td class="space-x-3">
                         <i
                             @click="verCarga(item.id)"
-                            class=" text-blue-600 fa-solid fa-eye">
+                            class=" text-blue-600 fa-solid fa-eye text-2xl">
                         </i>
                         <!-- Eliinar registro -->
                         <i
                             @click="eliminarCarga(item.id)"
-                            class=" text-red-500 fa-solid fa-trash-can"></i>
+                            class=" text-red-500 fa-solid fa-trash-can text-2xl"></i>
                     </td>
                 </tr>
             </tbody>
         </table>
+
+
+        <div class=" flex justify-between px-5 mt-3">
+            <!-- Informaciond e la tabla -->
+            <div>
+                <span>
+                    Página: {{ cargas.meta.current_page }}
+                </span>
+                |
+                <span>
+                    Por Página: {{ cargas.meta.per_page }}
+                </span>
+            </div>
+
+
+            <!-- Paginacion -->
+            <div class=" space-x-3 text-4xl" >
+                <!-- Atras -->
+                <Link
+                    preserve-scroll
+                    :href="cargas.links.prev ? cargas.links.prev   : '#' ">
+                    <i class="fa-solid fa-circle-arrow-left"></i>
+                </Link>
+                <Link
+                    preserve-scroll
+                    :href="cargas.links.next ? cargas.links.next : '#' ">
+                    <!-- Adelatne -->
+                    <i class="fa-solid fa-circle-arrow-right"></i>
+                </Link>
+            </div>
+        </div>
+
     </div>
 </template>

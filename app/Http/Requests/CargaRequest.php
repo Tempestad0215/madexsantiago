@@ -5,7 +5,6 @@ namespace App\Http\Requests;
 use App\Enums\ColorEnum;
 use App\Enums\EstatusTiketEnum;
 use App\Enums\MaterialEnum;
-use App\Enums\MesEnum;
 use App\Enums\VehiculoEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -40,12 +39,12 @@ class CargaRequest extends FormRequest
             'fecha_pago_tiket'=> ['nullable','date'],
             'precio_kg' => ['required','numeric', Rule::notIn('0.00')],
             'pago_efectivo' => ['required','numeric', Rule::notIn('0.00')],
-            'cant_pacas' => ['required','numeric'],
+            'cant_pacas' => ['nullable','numeric'],
             'cedula' => ['nullable','string'],
             'vehiculo' => ['required',Rule::enum(VehiculoEnum::class)],
             'color' => ['required',Rule::enum(ColorEnum::class)],
             'placa' => ['nullable','string'],
-            'mes' => ['required',Rule::enum(MesEnum::class)]
+            'tipo' => ['required','boolean']
         ];
     }
 }

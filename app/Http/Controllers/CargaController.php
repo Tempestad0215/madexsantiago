@@ -41,11 +41,14 @@ class CargaController extends Controller
             // Guardar los datos
             $carga = carga::create($request->toArray());
             // Carga full de todo
-            $cargaFianl = new CargaResource($carga);
-            // Retornar hacia atras con el exito
-            return to_route('carga.print',[
-                'carga' => $cargaFianl
-            ]);
+            // $cargaFianl = new CargaResource($carga);
+            // // Retornar hacia atras con el exito
+            // return to_route('carga.print',[
+            //     'carga' => $cargaFianl
+            // ]);
+            // Devolverse hacia atrras
+            return back();
+
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -163,11 +166,14 @@ class CargaController extends Controller
          $desde = $request->desde ?? Carbon::now()->format('Y-m-d');
          // Hasta
          $hasta = $request->hasta ?? Carbon::now()->format('Y-m-d');
+        //  isAvance
+        $isAvance = $request->avance;
         // Sacr los datos
         $data = carga::where(function(Builder $query) use ($desde, $hasta){
             $query->whereDate('created_at','>=', $desde)
             ->whereDate('created_at','<=', $hasta);
         })
+        ->where('tipo', $isAvance)
         ->select('total_kg','desc_kg','pago_efectivo','cant_pacas')
         ->get();
         // Sumar todos los dtos
@@ -177,7 +183,8 @@ class CargaController extends Controller
             'pago_efectivo' => $data->sum('pago_efectivo'),
             'cant_pacas' => $data->sum('cant_pacas'),
             'desde' => $desde,
-            'hasta' => $hasta
+            'hasta' => $hasta,
+            'isAvance'=> $isAvance === "0" ? true : false
         ];
 
         // Devolver la vista de imrpesion
@@ -213,17 +220,11 @@ class CargaController extends Controller
     private function getData(Request $request)
     {
         // Buscar
-        $suplidor = $request->suplidor;
-        // Desde
-        $desde = $request->desde ?? Carbon::now()->format('Y-m-d');
-        // Hasta
-        $hasta = $request->hasta ?? Carbon::now()->format('Y-m-d');
+        $datos = $request->datos;
         // Buscar los datos
-        $data = carga::where('suplidor','LIKE','%'.$suplidor.'%')
-            ->where(function(Builder $query) use ($desde, $hasta) {
-                $query->whereDate('created_at','>=',$desde)
-                    ->whereDate('created_at','<=',$hasta);
-            })->latest()
+        $data = carga::where('suplidor','LIKE','%'.$datos.'%')
+            ->orWhere('id','LIKE','%'.$datos.'%')
+            ->latest()
             ->simplePaginate(25);
 
         return $data;

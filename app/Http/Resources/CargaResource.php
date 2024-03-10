@@ -35,9 +35,8 @@ class CargaResource extends JsonResource
             'vehiculo' => $this->vehiculo->name,
             'color' => $this->color->name,
             'placa' => $this->placa ?? 'null',
-            'mes' => $this->mes->name,
+            'tipo' => $this->tipo,
             'creacion' => $this->created_at->format('d/m/Y h:i:s')
-
         ];
     }
 }

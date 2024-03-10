@@ -5,7 +5,6 @@ import { reactive } from 'vue';
 import {reporteFechaI} from '@interfaces/carga';
 import { PropType } from 'vue';
 import { formatoDinero } from '@global/helpers';
-import printJS from 'print-js';
 
 const props = defineProps({
     reporte:{
@@ -35,16 +34,7 @@ window.addEventListener("afterprint",()=>{
 // funciond e imprimir
 const printReport = ():void =>{
     window.print();
-    // printJS({
-    //     printable: 'printable',
-    //     type: 'html',
-    //     scanStyles: true,
-    //     font_size: '12pt',
-    //     documentTitle: 'Avance Industrial',
-    //     onPrintDialogClose: () =>{
-    //         window.history.back();
-    //     }
-    // });
+    window.history.back();
 }
 
 
@@ -61,7 +51,7 @@ const printReport = ():void =>{
                 <tr>
                     <!-- Informacion de la empresa -->
                     <th>
-                        AVANCE INDUSTRIAL S.R.L
+                        {{ reporte.isAvance ? 'AVANCE INDUSTRIAL SRL' : 'MADEX RECYCLING SRL' }}
                     </th>
                     <!-- Fecha de impresion -->
                     <th>

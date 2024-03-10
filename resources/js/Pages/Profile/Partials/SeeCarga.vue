@@ -67,85 +67,119 @@ const atras = () => {
                 </i>
             </button>
         </div>
-        <!-- Suplidor -->
-        <DataCarga
-            label="Suplidor"
-            :data="carga.data.suplidor"/>
+
+
         <!-- DEscuento -->
         <DataCarga
-            label="Descuento"
-            :data="formatoDinero(carga.data.desc) +' %'"/>
-        <!-- DEscuento -->
-        <DataCarga
-            label="Material"
-            :data="carga.data.material"/>
-        <!-- DEscuento -->
-        <DataCarga
-            label="Bruto"
-            :data="formatoDinero(carga.data.bruto) + ' KG.'"/>
-        <!-- DEscuento -->
-        <DataCarga
-            label="Tara"
-            :data="formatoDinero(carga.data.tara) + ' KG.'"/>
-        <!-- DEscuento -->
-        <DataCarga
-            label="Sub total"
-            :data="formatoDinero(carga.data.sub_total) + ' KG.'"/>
-        <!-- DEscuento -->
-        <DataCarga
-            label="Descuento KG"
-            :data="formatoDinero(carga.data.desc_kg) + ' KG.'"/>
-        <!-- DEscuento -->
-        <DataCarga
-            label="Total KG"
-            :data="formatoDinero(carga.data.total_kg)+ ' KG.'"/>
-        <!-- DEscuento -->
-        <DataCarga
-            label="Estatus tiket"
-            :data="carga.data.estatus_tiket"/>
-        <!-- DEscuento -->
-        <DataCarga
-            label="Fecha pago tiket"
-            :data="carga.data.fecha_pago_tiket"/>
-        <!-- DEscuento -->
-        <DataCarga
-            label="Precio x KG"
-            :data="'$ ' +formatoDinero(carga.data.precio_kg)"/>
-        <!-- DEscuento -->
-        <DataCarga
-            label="Pago Efectivo"
-            :data="'$ '+ formatoDinero(carga.data.pago_efectivo)"/>
-        <!-- DEscuento -->
-        <DataCarga
-            label="Cantidad pacas"
-            :data="formatoDinero(carga.data.cant_pacas)"/>
-        <!-- DEscuento -->
-        <DataCarga
-            label="Tipo empaquetado"
-            :data="carga.data.suelto_paca"/>
-        <!-- DEscuento -->
-        <DataCarga
-            label="Cédula"
-            :data="carga.data.cedula"/>
-        <!-- DEscuento -->
-        <DataCarga
-            label="Vehiculo"
-            :data="carga.data.vehiculo"/>
-        <!-- DEscuento -->
-        <DataCarga
-            label="Color"
-            :data="carga.data.color"/>
-        <!-- DEscuento -->
-        <DataCarga
-            label="# Placa"
-            :data="carga.data.placa"/>
-        <!-- DEscuento -->
-        <DataCarga
-            label="Mes"
-            :data="carga.data.mes"/>
-        <!-- DEscuento -->
-        <DataCarga
+            class=" float-right"
             label="Fecha de Creacion"
             :data="carga.data.creacion"/>
+
+        <div class=" grid grid-cols-2 grid-rows-3 gap-3 clear-both">
+            <!-- Datos del cliente -->
+
+            <fieldset class="px-5 py-3 rounded-md grid grid-cols-2 gap-3 shadow-lg border-2 border-blue-700">
+                <legend class="font-bold text-xl" >Entrada de datos de pesadas Cliente</legend>
+                <!-- Suplidor -->
+                <DataCarga
+                    label="Cliente"
+                    :data="carga.data.suplidor"/>
+                <!-- DEscuento -->
+                <DataCarga
+                    label="Cédula"
+                    :data="carga.data.cedula"/>
+            </fieldset>
+
+            <!-- Datos pesada del vehiculo -->
+            <fieldset class="px-5 py-3 rounded-md grid grid-cols-2 gap-3 shadow-lg border-2 border-blue-700" >
+                <legend class="font-bold text-xl" >Datos Pesada del Vehiculo</legend>
+                <!-- Bruto -->
+                <DataCarga
+                    label="Bruto"
+                    :data="carga.data.bruto + ' KG.'"/>
+                <!-- DEscuento -->
+                <DataCarga
+                    label="Tara"
+                    :data="carga.data.tara + ' KG.'"/>
+                <!-- DEscuento -->
+                <DataCarga
+                    label="Descuento"
+                    :data="carga.data.desc +' %'"/>
+                <!-- DEscuento -->
+                <DataCarga
+                    label="Sub total"
+                    :data="carga.data.sub_total + ' KG.'"/>
+                <!-- DEscuento -->
+                <DataCarga
+                    label="Descuento KG"
+                    :data="carga.data.desc_kg + ' KG.'"/>
+                <!-- DEscuento -->
+                <DataCarga
+                    label="Total KG"
+                    :data="carga.data.total_kg + ' KG.'"/>
+            </fieldset>
+
+
+
+            <!-- Datos del material recibido -->
+            <fieldset class="px-5 py-3 rounded-md grid grid-cols-2 gap-3 shadow-lg border-2 border-blue-700">
+                <legend class="font-bold text-xl" >Datos del Material Recibidos</legend>
+                <!-- DEscuento -->
+                <DataCarga
+                    label="Material"
+                    :data="carga.data.material"/>
+                <!-- DEscuento -->
+                <DataCarga
+                    label="Cantidad pacas"
+                    :data="carga.data.cant_pacas"/>
+                <!-- DEscuento -->
+                <DataCarga
+                    label="Tipo empaquetado"
+                    :data="carga.data.suelto_paca"/>
+            </fieldset>
+
+
+            <!-- Descripcion del vehiculo -->
+            <fieldset class="px-5 py-3 rounded-md grid grid-cols-2 gap-3 shadow-lg border-2 border-blue-700">
+                <legend class="font-bold text-xl" >Descripcion del Vehiculo</legend>
+                <!-- DEscuento -->
+                <DataCarga
+                    label="Vehiculo"
+                    :data="carga.data.vehiculo"/>
+                <!-- DEscuento -->
+                <DataCarga
+                    label="Color"
+                    :data="carga.data.color"/>
+                <!-- DEscuento -->
+                <DataCarga
+                    label="# Placa"
+                    :data="carga.data.placa"/>
+            </fieldset>
+
+
+
+            <!-- Estatus de la factura -->
+            <fieldset class="px-5 py-3 rounded-md grid grid-cols-2 gap-3 shadow-lg border-2 border-blue-700">
+                <legend class="font-bold text-xl" >Estatus de Pago de la Factura</legend>
+                <!-- DEscuento -->
+                <DataCarga
+                    label="Estatus tiket"
+                    :data="carga.data.estatus_tiket"/>
+                <!-- DEscuento -->
+                <DataCarga
+                    label="Fecha pago tiket"
+                    :data="carga.data.fecha_pago_tiket"/>
+                <!-- DEscuento -->
+                <DataCarga
+                    label="Precio x KG"
+                    :data="'$ ' + carga.data.precio_kg"/>
+                <!-- DEscuento -->
+                <DataCarga
+                    label="Pago Efectivo"
+                    :data="'$ '+ carga.data.pago_efectivo"/>
+            </fieldset>
+
+
+        </div>
     </div>
 </template>

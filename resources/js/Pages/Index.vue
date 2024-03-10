@@ -6,7 +6,7 @@ import { paginationI,reporteGeneralI , CargaI } from '../interfaces/carga';
 import {  ref } from 'vue';
 import Error from '@partials/Error.vue';
 import Showindex from '@partials/ShowIndex.vue';
-import { limpiarCampo } from '@/global/helpers';
+import { horaActual, limpiarCampo } from '@/global/helpers';
 
 const props = defineProps({
     mes:{
@@ -36,6 +36,7 @@ const props = defineProps({
 const porciento = ref(0)
 
 onMounted(()=>{
+    // Datos para editar
     if(props.carga_edit)
     {
         form.id = props.carga_edit.id;
@@ -56,7 +57,11 @@ onMounted(()=>{
         form.vehiculo = props.carga_edit.vehiculo;
         form.color = props.carga_edit.color;
         form.placa = props.carga_edit.placa;
+        form.tipo = props.carga_edit.tipo;
     }
+    form.fecha_pago_tiket = horaActual();
+
+
 });
 
 
@@ -81,13 +86,14 @@ const form = useForm({
     vehiculo: 1,
     color: 1,
     placa: "",
-    tipo:0
+    tipo: 0
 
 });
 // Formulario para reporte por fecha
 const formReport = useForm({
     desde:"",
-    hasta:""
+    hasta:"",
+    isAvance: 0
 });
 
 
@@ -170,7 +176,7 @@ const limpiar = () => {
 }
 // REport Fecha
 const reportDate = () => {
-    router.get(`/reporte?desde=${formReport.desde}&hasta=${formReport.hasta}`);
+    router.get(`/reporte?avance=${formReport.isAvance}&desde=${formReport.desde}&hasta=${formReport.hasta}`);
 }
 // Salir de la aopp
 const salir = ()=>{
@@ -273,7 +279,6 @@ const salir = ()=>{
                 <!-- Madex -->
                 <div>
                     <input
-                        @click="prueba()"
                         class="hidden peer"
                         type="radio"
                         :value="1"
@@ -301,7 +306,7 @@ const salir = ()=>{
 
 
             <!-- Datos entrada de pesada -->
-            <fieldset class="px-5 py-3 rounded-md grid grid-cols-2 gap-3 shadow-lg border-2 border-blue-700" >
+            <fieldset class="px-5 py-3 rounded-md shadow-lg border-2 border-blue-700" >
                 <legend class=" font-bold text-xl">Entrada de datos de pesadas</legend>
                 <!-- SUPLIDOR -->
                 <div>
@@ -335,22 +340,6 @@ const salir = ()=>{
                         id="cedula">
                         <!-- Mostrar el error -->
                         <Error :data="form.errors.cedula"/>
-                </div>
-                <!-- Cedula-->
-                <div>
-                    <label
-                        class="label"
-                        for="datetime">
-                        Fecha
-                    </label>
-                    <input
-                    v-model="form.fecha_hora"
-                    type="datetime-local"
-                    class="input w-full"
-                    name="datetime"
-                    id="datetime">
-                    <!-- Mostrar el error -->
-                    <Error :data="form.errors.cedula"/>
                 </div>
             </fieldset>
 
@@ -442,7 +431,7 @@ const salir = ()=>{
                         name="sub-total"
                         id="sub-total">
                     <!-- Mostrar el error -->
-                    <Error :data="form.errors.sub_total"/>
+                    <Error :data="form.errors.desc_kg"/>
                 </div>
                 <!-- Total KG-->
                 <div>
@@ -691,7 +680,7 @@ const salir = ()=>{
                     <input
                         v-model="form.fecha_pago_tiket"
                         class="input w-full"
-                        type="date"
+                        type="datetime-local"
                         name="fecha-pago-tiket"
                         id="fecha-pago-tiket">
                     <!-- Mostrar el error -->
@@ -775,6 +764,38 @@ const salir = ()=>{
             <h3 class="text-lg text-blue-800 text-center font-bold">
                 Impresion de reporte por fecha
             </h3>
+            <div class=" flex justify-center space-x-3 z-20">
+                <!-- Avance -->
+                <div>
+                    <input
+                        class="hidden peer"
+                        :value="0"
+                        type="radio"
+                        v-model="formReport.isAvance"
+                        name="r-avance"
+                        id="r-avance">
+                    <label
+                        class=" bg-blue-400 px-3 py-1 rounded-md block text-center w-[100px] peer-checked:bg-blue-700 peer-checked:text-white select-none "
+                        for="r-avance">
+                        Avance
+                    </label>
+                </div>
+                <!-- Madex -->
+                <div>
+                    <input
+                        class="hidden peer"
+                        type="radio"
+                        :value="1"
+                        v-model="formReport.isAvance"
+                        name="r-madex"
+                        id="r-madex">
+                    <label
+                        class=" bg-blue-400 px-3 py-1 rounded-md block text-center w-[100px] peer-checked:bg-blue-700 peer-checked:text-white select-none "
+                        for="r-madex">
+                        Madex
+                    </label>
+                </div>
+            </div>
 
             <!-- Impresion  -->
             <form

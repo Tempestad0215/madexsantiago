@@ -3,7 +3,6 @@ import Swal from "sweetalert2";
 
 export const successHttp = (msj:string) =>{
     Swal.fire({
-        position: "top-end",
         icon: "success",
         title: "Registro guardado correctamente",
         showConfirmButton: false,

@@ -18,7 +18,27 @@ class carga extends Model
 
     protected $table= 'cargas';
 
-    protected $guarded = [];
+    protected $fillable = [
+        'suplidor',
+        'desc',
+        'material',
+        'bruto',
+        'tara',
+        'sub_total',
+        'desc_kg',
+        'total_kg',
+        'estatus_tiket',
+        'fecha_pago_tiket',
+        'precio_kg',
+        'pago_efectivo',
+        'cant_pacas',
+        'suelto_pacas',
+        'cedula',
+        'vehiculo',
+        'color',
+        'placa',
+        'tipo',
+    ];
 
     protected $casts = [
         'material' => MaterialEnum::class,

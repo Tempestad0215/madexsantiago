@@ -22,7 +22,7 @@ return new class extends Migration
             $table->float('desc_kg',19,2)->nullable();
             $table->float('total_kg',19,2)->nullable();
             $table->enum('estatus_tiket',[1,2]);
-            $table->date('fecha_pago_tiket')->nullable();
+            $table->string('fecha_pago_tiket')->nullable();
             $table->float('precio_kg',19,2)->nullable();
             $table->float('pago_efectivo',19,2)->nullable();
             $table->float('cant_pacas',19,2)->nullable();
@@ -31,7 +31,7 @@ return new class extends Migration
             $table->enum('vehiculo',[1,2,3,4,5,6,7]);
             $table->enum('color',[1,2,3,4,5,6,7]);
             $table->string('placa',20)->nullable();
-            $table->enum('mes',[1,2,3,4,5,6,7,8,9,10,11,12]);
+            $table->boolean('tipo');
             $table->timestamps();
         });
     }
