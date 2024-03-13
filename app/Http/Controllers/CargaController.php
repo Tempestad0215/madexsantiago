@@ -119,7 +119,8 @@ class CargaController extends Controller
             'cargas' => $dataFinal,
             'carga_edit' => $carga,
             'update' => true,
-            'reporte' => $this->reportGeneral()
+            'reporte' => $this->reportGeneral(),
+            'reporteFecha' => []
         ]);
         } catch (\Throwable $th) {
             throw $th;

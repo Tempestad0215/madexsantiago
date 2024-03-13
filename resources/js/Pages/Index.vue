@@ -53,23 +53,24 @@ onMounted(()=>{
     {
         form.id = props.carga_edit.id;
         form.cliente = props.carga_edit.cliente;
-        form.desc = props.carga_edit.desc.toFixed(2);
+        form.desc = props.carga_edit.desc;
         form.material = props.carga_edit.material;
-        form.bruto = props.carga_edit.bruto.toFixed(2);
-        form.tara = props.carga_edit.tara.toFixed(2);
-        form.sub_total = props.carga_edit.sub_total.toFixed(2);
-        form.desc_kg = props.carga_edit.desc_kg.toFixed(2);
-        form.total_kg = props.carga_edit.total_kg.toFixed(2);
+        form.bruto = props.carga_edit.bruto;
+        form.tara = props.carga_edit.tara;
+        form.sub_total = props.carga_edit.sub_total;
+        form.desc_kg = props.carga_edit.desc_kg;
+        form.total_kg = props.carga_edit.total_kg;
         form.estatus_tiket = props.carga_edit.estatus_tiket;
         form.fecha_pago_tiket = props.carga_edit.fecha_pago_tiket;
-        form.precio_kg = props.carga_edit.precio_kg.toFixed(2);
-        form.cant_pacas = props.carga_edit.cant_pacas.toFixed(2);
+        form.precio_kg = props.carga_edit.precio_kg;
+        form.cant_pacas = props.carga_edit.cant_pacas;
         form.suelto_paca = props.carga_edit.suelto_paca;
         form.cedula = props.carga_edit.cedula;
         form.vehiculo = props.carga_edit.vehiculo;
         form.color = props.carga_edit.color;
         form.placa = props.carga_edit.placa;
         form.tipo = props.carga_edit.tipo;
+        form.pago_efectivo = props.carga_edit.pago_efectivo;
     }
     form.fecha_pago_tiket = horaActual();
 
@@ -91,19 +92,19 @@ onMounted(()=>{
 const form = useForm({
     id:0,
     cliente:"",
-    desc: "",
+    desc: 0,
     material: 1,
-    bruto: "",
-    tara: "",
-    fecha_hora:"",
-    sub_total: "",
-    desc_kg: "",
-    total_kg: "",
+    bruto: 0,
+    tara: 0,
+    fecha_hora: "",
+    sub_total: 0,
+    desc_kg: 0,
+    total_kg: 0,
     estatus_tiket: 1,
     fecha_pago_tiket: "",
-    precio_kg: "",
-    pago_efectivo: "",
-    cant_pacas: "",
+    precio_kg: 0,
+    pago_efectivo: 0,
+    cant_pacas: 0,
     suelto_paca: 1,
     cedula: "",
     vehiculo: 1,
@@ -180,24 +181,25 @@ const submit = () => {
 // Calulo de todo
 const sub_total = () =>{
     // Calcular el subtotal
-    form.sub_total = (limpiarCampo(form.bruto) - limpiarCampo(form.tara) || 0).toString();
+    form.sub_total = form.bruto - form.tara
     // Calculo del descuento
     descuento();
-    // Calculcar el total de todo
-    form.total_kg = (limpiarCampo(form.sub_total) - limpiarCampo(form.desc_kg) || 0).toString();
+
 }
 
 // // Decuento de material
 const descuento = () =>{
     // Sacar el pocentaje en decimales
-    porciento.value = limpiarCampo(form.desc) / 100 || 0;
+    porciento.value = form.desc / 100 || 0;
     // Calcula el sub total con el descuento
-    form.desc_kg = (limpiarCampo(form.sub_total) * porciento.value|| 0).toString();
+    form.desc_kg = form.sub_total * porciento.value
+    // Calculcar el total de todo
+    form.total_kg = form.sub_total - form.desc_kg;
 }
 // Calcular la cantidad a pagar
 const efectivoPagar = () =>{
     // HAcer el calculo del pago por efectivo
-    form.pago_efectivo = (limpiarCampo(form.total_kg) * limpiarCampo(form.precio_kg)).toString();
+    form.pago_efectivo = form.total_kg * form.precio_kg
 }
 // Limpiar todo
 const limpiar = () => {
@@ -770,7 +772,7 @@ const generarReporte = ():void =>{
                         :value="form.pago_efectivo"
                         readonly
                         class="input w-full"
-                        type="number"
+                        type="text"
                         name="pago-efectivo"
                         id="pago-efectivo">
                     <!-- Mostrar el error -->
