@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CargaRequest;
 use App\Http\Resources\CargaResource;
 use App\Models\carga;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -41,11 +42,14 @@ class CargaController extends Controller
             // Guardar los datos
             $carga = carga::create($request->toArray());
             // Carga full de todo
-            // $cargaFianl = new CargaResource($carga);
-            // // Retornar hacia atras con el exito
-            // return to_route('carga.print',[
-            //     'carga' => $cargaFianl
-            // ]);
+            $cargaFinal = new CargaResource($carga);
+            // Si desea imprir los datos de la carga
+            if($request->imprimir_carga)
+            {
+                return redirect()->route('carga.print',[
+                    'carga' => $carga->id
+                ]);
+            }
             // Devolverse hacia atrras
             return back();
 
@@ -222,7 +226,7 @@ class CargaController extends Controller
         // Buscar
         $datos = $request->datos;
         // Buscar los datos
-        $data = carga::where('suplidor','LIKE','%'.$datos.'%')
+        $data = carga::where('cliente','LIKE','%'.$datos.'%')
             ->orWhere('id','LIKE','%'.$datos.'%')
             ->latest()
             ->simplePaginate(25);

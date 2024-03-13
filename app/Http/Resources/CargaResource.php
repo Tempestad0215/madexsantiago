@@ -17,7 +17,7 @@ class CargaResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'suplidor' => $this->suplidor,
+            'cliente' => $this->cliente,
             'desc' =>  $this->desc,
             'material' => $this->material->name,
             'bruto' => $this->bruto,

@@ -2,12 +2,14 @@
 import { Head, router, useForm, Link} from '@inertiajs/vue3';
 import {successHttp} from '../global/alert'
 import { onMounted, PropType } from 'vue';
-import { paginationI,reporteGeneralI , CargaI } from '../interfaces/carga';
+import { paginationI,reporteGeneralI , CargaI, cargaResourceI } from '../interfaces/carga';
 import {  ref } from 'vue';
 import Error from '@partials/Error.vue';
 import Showindex from '@partials/ShowIndex.vue';
 import { horaActual, limpiarCampo } from '@/global/helpers';
-
+import WindowPrint from './Profile/Partials/WindowPrint.vue';
+WindowPrint
+// Props de la ventana
 const props = defineProps({
     mes:{
         type: Number,
@@ -31,16 +33,23 @@ const props = defineProps({
     reporte:{
         type: Object as PropType<reporteGeneralI>,
         required: true
-    }
+    },
 });
-const porciento = ref(0)
 
+
+// Datos de la ventana
+const porciento = ref(0);
+const imprimirCarga = ref(false);
+
+
+
+// Al momento de cargar
 onMounted(()=>{
     // Datos para editar
     if(props.carga_edit)
     {
         form.id = props.carga_edit.id;
-        form.suplidor = props.carga_edit.suplidor;
+        form.cliente = props.carga_edit.cliente;
         form.desc = props.carga_edit.desc.toFixed(2);
         form.material = props.carga_edit.material;
         form.bruto = props.carga_edit.bruto.toFixed(2);
@@ -65,9 +74,11 @@ onMounted(()=>{
 });
 
 
+
+// Datos del formulario
 const form = useForm({
     id:0,
-    suplidor:"",
+    cliente:"",
     desc: "",
     material: 1,
     bruto: "",
@@ -86,9 +97,16 @@ const form = useForm({
     vehiculo: 1,
     color: 1,
     placa: "",
-    tipo: 0
+    tipo: 0,
+    imprimir_carga: false
 
 });
+
+
+
+
+
+
 // Formulario para reporte por fecha
 const formReport = useForm({
     desde:"",
@@ -97,13 +115,14 @@ const formReport = useForm({
 });
 
 
+
 // Funciones
 const submit = () => {
     if(props.update)
     {
         form.transform((data) => ({
             ...data,
-            suplidor: data.suplidor.toUpperCase(),
+            cliente: data.cliente.toUpperCase(),
             placa: data.placa.toUpperCase(),
             desc: limpiarCampo(data.desc),
             bruto: limpiarCampo(data.bruto),
@@ -123,7 +142,7 @@ const submit = () => {
 
         form.transform((data) => ({
             ...data,
-            suplidor: data.suplidor.toUpperCase(),
+            cliente: data.cliente.toUpperCase(),
             placa: data.placa.toUpperCase(),
             desc: limpiarCampo(data.desc),
             bruto: limpiarCampo(data.bruto),
@@ -136,7 +155,10 @@ const submit = () => {
             cant_pacas: limpiarCampo(data.cant_pacas),
         })).post(route('carga.store'),{
             onSuccess:()=>{
-                successHttp('Datos registrado correctamente');
+                if(!form.imprimir_carga)
+                {
+                    successHttp('Datos registrado correctamente');
+                }
                 form.reset();
             }
         })
@@ -186,14 +208,19 @@ const salir = ()=>{
 </script>
 
 
+
+
+
+
+
 <template>
     <Head title="Registro" />
 
-
+    <!-- Datos de la ventana -->
     <div class="p-3 ">
 
         <!-- Datos dell usuarios -->
-        <div class="pb-3">
+        <div class="pb-3 print:hidden">
             <h3 class=" text-blue-800 font-bold text-2xl text-center mb-3">
                 Datos del usuario
             </h3>
@@ -219,7 +246,7 @@ const salir = ()=>{
 
 
         <!-- REporte General de todo -->
-        <h3 class=" text-blue-800 font-bold text-2xl text-center mb-3">
+        <h3 class=" text-blue-800 font-bold text-2xl text-center mb-3 print:hidden">
             Reporte General
         </h3>
         <hr>
@@ -227,7 +254,7 @@ const salir = ()=>{
 
 
         <!-- REporte del mes -->
-        <div class=" grid grid-cols-2 gap-2 text-center mt-3" >
+        <div class=" grid grid-cols-2 gap-2 text-center mt-3 print:hidden" >
             <!-- Total Kg anual -->
             <div>
                 <p class="label">Total KG. anual</p>
@@ -253,7 +280,7 @@ const salir = ()=>{
 
 
         <!-- Botones para navegar algunos datos -->
-        <div class="mt-3">
+        <div class="mt-3 print:hidden">
             <Link
                 class=" bg-blue-800 px-3 py-2 text-white rounded-md"
                 :href="route('carga.show')">
@@ -297,11 +324,11 @@ const salir = ()=>{
 
         <!-- Formulario de la carga -->
         <h3
-            class="text-xl my-3 font-bold text-blue-800 text-center">
+            class="text-xl my-3 font-bold text-blue-800 text-center print:hidden">
             Registro de mercancia
         </h3>
         <form
-            class=" grid grid-cols-2 grid-rows-3 gap-3"
+            class=" grid grid-cols-2 grid-rows-3 gap-3 print:hidden"
             @submit.prevent="submit">
 
 
@@ -312,17 +339,17 @@ const salir = ()=>{
                 <div>
                     <label
                         class=" block font-bold"
-                        for="suplidor">
+                        for="cliente">
                         Cliente
                     </label>
                     <input
-                        v-model="form.suplidor"
+                        v-model="form.cliente"
                         class="input w-full"
                         type="text"
-                        name="suplidor"
-                        id="suplidor">
+                        name="cliente"
+                        id="cliente">
                     <!-- Mostrar el error -->
-                    <Error :data="form.errors.suplidor"/>
+                    <Error :data="form.errors.cliente"/>
                 </div>
                 <!-- Cedula-->
                 <div>
@@ -740,13 +767,19 @@ const salir = ()=>{
                     {{ update ? 'Actualizar' : 'Guardar'}}
                     <i class="fa-solid fa-floppy-disk"></i>
                 </button>
+                <button
+                    @click="form.imprimir_carga = true"
+                    class=" boton-send px-3 rounded-md font-bold w-fit"
+                    type="submit">
+                    {{ update ? 'Actualizar e Imprimir' : 'Guardar e Imprimir'}}
+                    <i class="fa-solid fa-print"></i>
+                </button>
             </div>
         </form>
 
 
-
         <!-- Mostrar los datos registrados -->
-        <div class="mt-3">
+        <div class="mt-3 print:hidden">
             <h3 class="text-lg  text-blue-900 font-bold text-center">
                 Datos registrados
             </h3>
@@ -759,7 +792,7 @@ const salir = ()=>{
 
 
         <!-- Impresion del reporte por fecha -->
-        <div class="mt-3">
+        <div class="mt-3 print:hidden ">
             <!-- titulo -->
             <h3 class="text-lg text-blue-800 text-center font-bold">
                 Impresion de reporte por fecha

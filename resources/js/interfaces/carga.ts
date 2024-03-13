@@ -17,7 +17,7 @@ export interface CargaI{
     precio_kg: number;
     sub_total: number;
     suelto_paca: number;
-    suplidor: string;
+    cliente: string;
     tara: number;
     total_kg: number;
     vehiculo: number;
@@ -47,7 +47,7 @@ export interface cargaDefaultI{
     precio_kg: number;
     sub_total: number;
     suelto_paca: string;
-    suplidor: string | null;
+    cliente: string | null;
     tara: number;
     total_kg: number;
     vehiculo: string;

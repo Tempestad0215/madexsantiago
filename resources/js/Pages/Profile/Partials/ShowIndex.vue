@@ -136,7 +136,7 @@ const eliminarCarga = (id:number):void => {
                 class=" border-b-2 border-blue-900 ">
                 <tr>
                     <th>Id</th>
-                    <th >Suplidor</th>
+                    <th >Cliente</th>
                     <th>Material</th>
                     <th class="hidden-field-lg">Bruto</th>
                     <th class="hidden-field-lg">Tara</th>
@@ -154,7 +154,7 @@ const eliminarCarga = (id:number):void => {
                         {{ item.id }}
                     </td>
                     <td class=" truncate max-w-[75px]">
-                        {{item.suplidor}}
+                        {{item.cliente}}
                     </td>
                     <td>
                         {{ item.material }}

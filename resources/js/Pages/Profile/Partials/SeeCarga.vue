@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { PropType } from 'vue';
 import { cargaResourceI } from '@interfaces/carga';
-import { Head, router } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 import DataCarga from './DataCarga.vue';
 import { formatoDinero } from '@global/helpers';
 
@@ -83,7 +83,7 @@ const atras = () => {
                 <!-- Suplidor -->
                 <DataCarga
                     label="Cliente"
-                    :data="carga.data.suplidor"/>
+                    :data="carga.data.cliente"/>
                 <!-- DEscuento -->
                 <DataCarga
                     label="Cédula"

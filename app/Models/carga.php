@@ -19,7 +19,7 @@ class carga extends Model
     protected $table= 'cargas';
 
     protected $fillable = [
-        'suplidor',
+        'cliente',
         'desc',
         'material',
         'bruto',
@@ -32,7 +32,7 @@ class carga extends Model
         'precio_kg',
         'pago_efectivo',
         'cant_pacas',
-        'suelto_pacas',
+        'suelto_paca',
         'cedula',
         'vehiculo',
         'color',

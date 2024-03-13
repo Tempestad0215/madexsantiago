@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('cargas', function (Blueprint $table) {
             $table->id();
-            $table->string('suplidor',75)->nullable();
+            $table->string('cliente',75)->nullable();
             $table->float('desc',19,2)->nullable();
             $table->enum('material',[1,2,3]);
             $table->float('bruto',19,2);

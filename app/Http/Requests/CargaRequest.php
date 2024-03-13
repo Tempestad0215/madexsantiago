@@ -27,7 +27,7 @@ class CargaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'suplidor' => ['required','string','min:4','max:75'],
+            'cliente' => ['required','string','min:4','max:75'],
             'desc' => ['nullable','numeric'],
             'material' => ['required', Rule::enum(MaterialEnum::class)],
             'bruto' => ['required','numeric', Rule::notIn('0.00')],
@@ -44,7 +44,8 @@ class CargaRequest extends FormRequest
             'vehiculo' => ['required',Rule::enum(VehiculoEnum::class)],
             'color' => ['required',Rule::enum(ColorEnum::class)],
             'placa' => ['nullable','string'],
-            'tipo' => ['required','boolean']
+            'tipo' => ['required','boolean'],
+            'imprimir_carga' => ['nullable','boolean']
         ];
     }
 }
