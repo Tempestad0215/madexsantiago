@@ -98,3 +98,16 @@ export interface reporteFechaI{
     isAvance: boolean;
 }
 
+
+// visualizar los reportes
+export interface reporteFechaVisualizarI{
+    total_kg: number;
+    desc_kg: number;
+    pago_efectivo: number;
+    cant_pacas: number;
+    desde: string;
+    hasta: string;
+    isAvance: boolean;
+
+}
+

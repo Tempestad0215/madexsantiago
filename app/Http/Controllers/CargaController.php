@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CargaRequest;
 use App\Http\Resources\CargaResource;
 use App\Models\carga;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -23,12 +22,22 @@ class CargaController extends Controller
             $data = $this->getData($request);
             // Obteneer los datos regitrados
             $dataFinal = CargaResource::collection($data)->response()->getData(true);
+
+            $reporte = [];
+            if($request->desde)
+            {
+                $reporte = $this->fechaGeneral($request);
+
+            }
+            // Sacar el reporte por fehca
+
             // Devolver la vista con los datos
             return Inertia::render('Index',[
                 'mes' => $mes,
                 'fecha_actual' => Carbon::now()->format('Y-m-d'),
                 'cargas' => $dataFinal,
-                'reporte' => $this->reportGeneral()
+                'reporte' => $this->reportGeneral(),
+                'reporteFecha' => $reporte
             ]);
         } catch (\Throwable $th) {
             throw $th;
@@ -166,37 +175,29 @@ class CargaController extends Controller
     //Hacer el reporte por dia para imprimir
     public function reporteFecha(Request $request)
     {
-         // Desde
-         $desde = $request->desde ?? Carbon::now()->format('Y-m-d');
-         // Hasta
-         $hasta = $request->hasta ?? Carbon::now()->format('Y-m-d');
-        //  isAvance
-        $isAvance = $request->avance;
-        // Sacr los datos
-        $data = carga::where(function(Builder $query) use ($desde, $hasta){
-            $query->whereDate('created_at','>=', $desde)
-            ->whereDate('created_at','<=', $hasta);
-        })
-        ->where('tipo', $isAvance)
-        ->select('total_kg','desc_kg','pago_efectivo','cant_pacas')
-        ->get();
-        // Sumar todos los dtos
-        $reporteFecha = [
-            'total_kg' => $data->sum('total_kg'),
-            'desc_kg' => $data->sum('desc_kg'),
-            'pago_efectivo' => $data->sum('pago_efectivo'),
-            'cant_pacas' => $data->sum('cant_pacas'),
-            'desde' => $desde,
-            'hasta' => $hasta,
-            'isAvance'=> $isAvance === "0" ? true : false
-        ];
+        // Datos de la fecha
+        $reporte = $this->fechaGeneral($request);
+
 
         // Devolver la vista de imrpesion
         return Inertia::render('Profile/Partials/ReportPrint',[
-            'reporte' => $reporteFecha
+            'reporte' => $reporte
         ]);
 
     }
+
+    // Generar un reporte para visualizar
+    public function generarReporte(Request $request)
+    {
+
+        // Obtener los datos del reporte
+        $reporte = $this->fechaGeneral($request);
+        // Devolver los datos en json para visualizar
+        return redirect('/')->with('reporteFecha', [
+            'funciona' => 'Sui asdasdasd'
+         ]);
+    }
+
 
     // Reporte de todos los datos
     private function reportGeneral(): array
@@ -232,5 +233,44 @@ class CargaController extends Controller
             ->simplePaginate(25);
 
         return $data;
+    }
+
+    // Reporte por fecha
+    private function fechaGeneral(Request $request): array
+    {
+        try {
+
+
+            // Desde
+            $desde = $request->desde ?? Carbon::now()->format('Y-m-d');
+            // Hasta
+            $hasta = $request->hasta ?? Carbon::now()->format('Y-m-d');
+            //  isAvance
+            $isAvance = $request->avance;
+            // Sacr los datos
+            $data = carga::where(function(Builder $query) use ($desde, $hasta){
+                $query->whereDate('created_at','>=', $desde)
+                ->whereDate('created_at','<=', $hasta);
+            })
+            ->where('tipo', $isAvance)
+            ->select('total_kg','desc_kg','pago_efectivo','cant_pacas')
+            ->get();
+            // Sumar todos los dtos
+            $reporteFecha = [
+                'total_kg' => $data->sum('total_kg'),
+                'desc_kg' => $data->sum('desc_kg'),
+                'pago_efectivo' => $data->sum('pago_efectivo'),
+                'cant_pacas' => $data->sum('cant_pacas'),
+                'desde' => $desde,
+                'hasta' => $hasta,
+                'isAvance'=> $isAvance === "0" ? true : false
+            ];
+            // Devolver los datos
+            return $reporteFecha;
+
+
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 }

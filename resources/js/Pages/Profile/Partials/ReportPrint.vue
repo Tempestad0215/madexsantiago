@@ -24,7 +24,7 @@ onMounted(()=>{
     // Llamar los datos
     setTimeout(()=>{
         printReport();
-    },500);
+    },200);
 });
 
 window.addEventListener("afterprint",()=>{
@@ -33,8 +33,10 @@ window.addEventListener("afterprint",()=>{
 
 // funciond e imprimir
 const printReport = ():void =>{
+    // Imprimir el reporte
     window.print();
-    window.history.back();
+    // Retroceder a la ventana principal
+    window.location.href = "/";
 }
 
 

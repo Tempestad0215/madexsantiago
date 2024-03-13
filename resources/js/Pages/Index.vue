@@ -2,13 +2,14 @@
 import { Head, router, useForm, Link} from '@inertiajs/vue3';
 import {successHttp} from '../global/alert'
 import { onMounted, PropType } from 'vue';
-import { paginationI,reporteGeneralI , CargaI, cargaResourceI } from '../interfaces/carga';
+import { paginationI,reporteGeneralI , CargaI,reporteFechaVisualizarI } from '../interfaces/carga';
 import {  ref } from 'vue';
 import Error from '@partials/Error.vue';
 import Showindex from '@partials/ShowIndex.vue';
 import { horaActual, limpiarCampo } from '@/global/helpers';
-import WindowPrint from './Profile/Partials/WindowPrint.vue';
-WindowPrint
+
+
+
 // Props de la ventana
 const props = defineProps({
     mes:{
@@ -34,12 +35,14 @@ const props = defineProps({
         type: Object as PropType<reporteGeneralI>,
         required: true
     },
+    reporteFecha:{
+        type: Object as PropType<reporteFechaVisualizarI>,
+    }
 });
 
 
 // Datos de la ventana
 const porciento = ref(0);
-const imprimirCarga = ref(false);
 
 
 
@@ -69,6 +72,15 @@ onMounted(()=>{
         form.tipo = props.carga_edit.tipo;
     }
     form.fecha_pago_tiket = horaActual();
+
+
+    // Verificar si existe el reporte
+    if(props.reporteFecha)
+    {
+        formReport.desde = props.reporteFecha.desde;
+        formReport.hasta = props.reporteFecha.hasta;
+    }
+
 
 
 });
@@ -111,7 +123,7 @@ const form = useForm({
 const formReport = useForm({
     desde:"",
     hasta:"",
-    isAvance: 0
+    avance: 0
 });
 
 
@@ -198,12 +210,29 @@ const limpiar = () => {
 }
 // REport Fecha
 const reportDate = () => {
-    router.get(`/reporte?avance=${formReport.isAvance}&desde=${formReport.desde}&hasta=${formReport.hasta}`);
+    router.get(`/reporte?avance=${formReport.avance}&desde=${formReport.desde}&hasta=${formReport.hasta}`);
 }
 // Salir de la aopp
 const salir = ()=>{
     router.post(route('logout'));
 }
+
+
+// Generar el reporte por fecha y por empresa
+const generarReporte = ():void =>{
+
+    formReport.get('/',{
+        preserveScroll: true,
+        preserveState: true,
+        only: ['reporteFecha']
+    });
+
+
+}
+
+
+
+
 
 </script>
 
@@ -804,7 +833,7 @@ const salir = ()=>{
                         class="hidden peer"
                         :value="0"
                         type="radio"
-                        v-model="formReport.isAvance"
+                        v-model="formReport.avance"
                         name="r-avance"
                         id="r-avance">
                     <label
@@ -819,7 +848,7 @@ const salir = ()=>{
                         class="hidden peer"
                         type="radio"
                         :value="1"
-                        v-model="formReport.isAvance"
+                        v-model="formReport.avance"
                         name="r-madex"
                         id="r-madex">
                     <label
@@ -833,7 +862,7 @@ const salir = ()=>{
             <!-- Impresion  -->
             <form
                 class=" sm:grid sm:grid-cols-2 sm:gap-3"
-                @submit="reportDate">
+                @submit="">
                 <!-- Desde -->
                 <div>
                     <label
@@ -866,8 +895,39 @@ const salir = ()=>{
                     <!-- Error -->
                     <Error :data="formReport.errors.hasta"/>
                 </div>
-                <!-- Boton para enviar los datos -->
-                <div class="text-right sm:col-span-full mt-3">
+
+                <!-- Datos del reporte de venta -->
+                <fieldset class=" px-5 py-3 rounded-md grid grid-cols-2 gap-3 shadow-lg border-2 border-blue-700">
+                    <legend class=" font-bold text-xl">
+                        Reporte Generado
+                    </legend>
+                    <p>
+                        Total KG : {{ reporteFecha.total_kg }}
+                    </p>
+                    <p>
+                        Total Dec. KG : {{ reporteFecha.desc_kg }}
+                    </p>
+                    <p>
+                        Total Desc Anual : {{ reporteFecha.pago_efectivo }}
+                    </p>
+                    <p>
+                        Total Efectivo : {{ reporteFecha.cant_pacas }}
+                    </p>
+                    <p>
+                        Desde : {{ reporteFecha.desde }}
+                    </p>
+                    <p>
+                        Hasta : {{ reporteFecha.hasta }}
+                    </p>
+                </fieldset>
+
+                <div class="text-right sm:col-span-full mt-3 space-x-3">
+                    <button
+                        @click="generarReporte()"
+                        class="boton-send w-fit"
+                        type="button">
+                        Generar Reporte
+                    </button>
                     <button
                         @click="reportDate"
                         class="boton-send w-[175px]"

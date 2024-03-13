@@ -25,7 +25,9 @@ Route::middleware('auth')->group(function(){
     Route::put('/actualizar/{carga}',[CargaController::class,'update'])->name('carga.update');
     // Pruebad e todo
     Route::get('/reporte',[CargaController::class,'ReporteFecha'])->name('carga.reporte');
+    // Reporte para visualziar
+    Route::get('/ver/reporte',[CargaController::class,'generarReporte'])->name('carga.reporte.ver');
+
 });
-// Auth::routes(["register" => false]);
 
 
