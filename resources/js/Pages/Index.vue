@@ -7,6 +7,7 @@ import {  ref } from 'vue';
 import Error from '@partials/Error.vue';
 import Showindex from '@partials/ShowIndex.vue';
 import { horaActual, limpiarCampo } from '@/global/helpers';
+import { moneyConfig } from '@/global/moneyConfig';
 
 
 
@@ -53,24 +54,24 @@ onMounted(()=>{
     {
         form.id = props.carga_edit.id;
         form.cliente = props.carga_edit.cliente;
-        form.desc = props.carga_edit.desc;
+        form.desc = props.carga_edit.desc.toString();
         form.material = props.carga_edit.material;
-        form.bruto = props.carga_edit.bruto;
-        form.tara = props.carga_edit.tara;
-        form.sub_total = props.carga_edit.sub_total;
-        form.desc_kg = props.carga_edit.desc_kg;
-        form.total_kg = props.carga_edit.total_kg;
+        form.bruto = props.carga_edit.bruto.toString();
+        form.tara = props.carga_edit.tara.toString();
+        form.sub_total = props.carga_edit.sub_total.toString();
+        form.desc_kg = props.carga_edit.desc_kg.toString();
+        form.total_kg = props.carga_edit.total_kg.toString();
         form.estatus_tiket = props.carga_edit.estatus_tiket;
         form.fecha_pago_tiket = props.carga_edit.fecha_pago_tiket;
-        form.precio_kg = props.carga_edit.precio_kg;
-        form.cant_pacas = props.carga_edit.cant_pacas;
+        form.precio_kg = props.carga_edit.precio_kg.toString();
+        form.cant_pacas = props.carga_edit.cant_pacas.toString();
         form.suelto_paca = props.carga_edit.suelto_paca;
         form.cedula = props.carga_edit.cedula;
         form.vehiculo = props.carga_edit.vehiculo;
         form.color = props.carga_edit.color;
         form.placa = props.carga_edit.placa;
         form.tipo = props.carga_edit.tipo;
-        form.pago_efectivo = props.carga_edit.pago_efectivo;
+        form.pago_efectivo = props.carga_edit.pago_efectivo.toString();
     }
     form.fecha_pago_tiket = horaActual();
 
@@ -92,19 +93,19 @@ onMounted(()=>{
 const form = useForm({
     id:0,
     cliente:"",
-    desc: 0,
+    desc: "",
     material: 1,
-    bruto: 0,
-    tara: 0,
+    bruto: "",
+    tara: "",
     fecha_hora: "",
-    sub_total: 0,
-    desc_kg: 0,
-    total_kg: 0,
+    sub_total: "",
+    desc_kg: "",
+    total_kg: "",
     estatus_tiket: 1,
     fecha_pago_tiket: "",
-    precio_kg: 0,
-    pago_efectivo: 0,
-    cant_pacas: 0,
+    precio_kg: "",
+    pago_efectivo: "",
+    cant_pacas: "",
     suelto_paca: 1,
     cedula: "",
     vehiculo: 1,
@@ -180,8 +181,13 @@ const submit = () => {
 }
 // Calulo de todo
 const sub_total = () =>{
-    // Calcular el subtotal
-    form.sub_total = form.bruto - form.tara
+
+    // Limpiar los datos
+    let bruto:number = limpiarCampo(form.bruto);
+    let tara:number = limpiarCampo(form.tara);
+
+    // Calcular el subtotal y ponerlo como una string
+    form.sub_total = (bruto - tara).toFixed(2);
     // Calculo del descuento
     descuento();
 
@@ -189,17 +195,31 @@ const sub_total = () =>{
 
 // // Decuento de material
 const descuento = () =>{
+
+    // Limpiar los datos
+    let desc:number = limpiarCampo(form.desc);
+    let subTotal:number = limpiarCampo(form.sub_total);
+
     // Sacar el pocentaje en decimales
-    porciento.value = form.desc / 100 || 0;
+    porciento.value = desc / 100 || 0;
     // Calcula el sub total con el descuento
-    form.desc_kg = form.sub_total * porciento.value
+    form.desc_kg = (subTotal * porciento.value).toFixed(2)
+
+    // Limpiar el campo de Desc Kg
+    let descKg:number = limpiarCampo(form.desc_kg);
+
     // Calculcar el total de todo
-    form.total_kg = form.sub_total - form.desc_kg;
+    form.total_kg = (subTotal - descKg).toFixed(2);
 }
 // Calcular la cantidad a pagar
 const efectivoPagar = () =>{
+    // Limpiar los datos
+    let totalKg:number = limpiarCampo(form.total_kg);
+    let precioKg:number = limpiarCampo(form.precio_kg);
+
+
     // HAcer el calculo del pago por efectivo
-    form.pago_efectivo = form.total_kg * form.precio_kg
+    form.pago_efectivo = (totalKg * precioKg).toFixed(2);
 }
 // Limpiar todo
 const limpiar = () => {
@@ -289,22 +309,22 @@ const generarReporte = ():void =>{
             <!-- Total Kg anual -->
             <div>
                 <p class="label">Total KG. anual</p>
-                <p>{{ props.reporte.total_kg_anual }}</p>
+                <p>{{ (props.reporte.total_kg_anual).toFixed(2) }}</p>
             </div>
             <!-- Total Pagado Anual -->
             <div>
                 <p class="label">Total desc. anual</p>
-                <p>{{ props.reporte.total_desc_anual }}</p>
+                <p>{{ (props.reporte.total_desc_anual).toFixed(2) }}</p>
             </div>
             <!-- Total Pagado Anual -->
             <div>
                 <p class="label">Total pacas anual</p>
-                <p>{{ props.reporte.total_cant_pacas }}</p>
+                <p>{{ (props.reporte.total_cant_pacas).toFixed(2) }}</p>
             </div>
             <!-- Reporte Mensual -->
             <div>
                 <p class="label">Total KG mes</p>
-                <p>{{ props.reporte.total_kg_mensual }}</p>
+                <p>{{ (props.reporte.total_kg_mensual).toFixed(2) }}</p>
             </div>
         </div>
         <hr>
@@ -416,8 +436,9 @@ const generarReporte = ():void =>{
                     <input
                         v-model="form.bruto"
                         @input="sub_total"
+                        v-money="moneyConfig"
                         class="input w-full"
-                        type="number"
+                        type="text"
                         name="bruto"
                         id="bruto">
                     <!-- Mostrar el error -->
@@ -433,8 +454,9 @@ const generarReporte = ():void =>{
                     <input
                         v-model="form.tara"
                         @input="sub_total"
+                        v-money="moneyConfig"
                         class="input w-full"
-                        type="number"
+                        type="text"
                         name="tara"
                         id="tara">
                     <!-- Mostrar el error -->
@@ -450,8 +472,9 @@ const generarReporte = ():void =>{
                     <input
                         v-model="form.desc"
                         @input="descuento"
+                        v-money="moneyConfig"
                         class="input w-full"
-                        type="number"
+                        type="text"
                         name="desc"
                         id="desc">
                     <!-- Mostrar el error -->
@@ -468,6 +491,7 @@ const generarReporte = ():void =>{
                         :value="form.sub_total"
                         readonly
                         class="input w-full"
+                        v-money="moneyConfig"
                         type="text"
                         name="sub-total"
                         id="sub-total">
@@ -484,6 +508,7 @@ const generarReporte = ():void =>{
                     <input
                         :value="form.desc_kg"
                         readonly
+                        v-money="moneyConfig"
                         class="input w-full"
                         type="text"
                         name="sub-total"
@@ -501,6 +526,7 @@ const generarReporte = ():void =>{
                     <input
                         :value="form.total_kg"
                         readonly
+                        v-money="moneyConfig"
                         class="input w-full"
                         type="text"
                         name="total-kg"
@@ -553,7 +579,8 @@ const generarReporte = ():void =>{
                     <input
                         v-model="form.cant_pacas"
                         class="input w-full"
-                        type="number"
+                        v-money="moneyConfig"
+                        type="text"
                         name="cant-paca"
                         id="cant-paca">
                     <!-- Mostrar el error -->
@@ -754,8 +781,9 @@ const generarReporte = ():void =>{
                     <input
                         v-model="form.precio_kg"
                         @input="efectivoPagar()"
+                        v-money="moneyConfig"
                         class="input w-full"
-                        type="number"
+                        type="text"
                         name="precio-kg"
                         id="precio-kg">
                     <!-- Mostrar el error -->
@@ -771,6 +799,7 @@ const generarReporte = ():void =>{
                     <input
                         :value="form.pago_efectivo"
                         readonly
+                        v-money="moneyConfig"
                         class="input w-full"
                         type="text"
                         name="pago-efectivo"

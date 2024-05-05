@@ -161,15 +161,15 @@ const eliminarCarga = (id:number):void => {
                     </td>
                     <td
                         class="hidden-field-lg">
-                        {{ item.bruto }}
+                        {{ (item.bruto).toFixed(2) }}
                     </td>
                     <td
                         class="hidden-field-lg">
-                        {{ item.tara }}
+                        {{ (item.tara).toFixed(2) }}
                     </td>
                     <td
                         class="hidden-field-lg">
-                        {{ item.total_kg }}
+                        {{ (item.total_kg).toFixed(2) }}
                     </td>
                     <td class=" truncate max-w-[75px]">
                         {{ item.estatus_tiket }}
